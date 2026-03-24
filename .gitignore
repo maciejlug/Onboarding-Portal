@@ -1,0 +1,11 @@
+server/.venv/
+server/db.sqlite3
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.vscode/
+node_modules/
+dist/
+build/
+.env
