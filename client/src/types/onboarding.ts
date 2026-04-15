@@ -5,3 +5,8 @@ export type OnboardingSession = {
   created_at: string;
   updated_at: string;
 };
+
+export type CreateOnboardingSessionPayload = {
+  status: string;
+  account_type: string;
+};
