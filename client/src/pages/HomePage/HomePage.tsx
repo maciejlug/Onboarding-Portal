@@ -13,10 +13,7 @@ export default function HomePage() {
 
         <div className="hero__actions">
           <Link to="/onboarding" className="button-link">
-            Go to onboarding
-          </Link>
-          <Link to="/register" className="button-link button-link--secondary">
-            Create account
+            Register account
           </Link>
         </div>
       </section>

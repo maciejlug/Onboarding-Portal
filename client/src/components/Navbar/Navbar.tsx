@@ -10,16 +10,13 @@ export default function Navbar() {
             <div className="navbar__brand">
               <Link to="/">Onboarding Portal</Link>
             </div>
-
             <nav className="navbar__nav">
               <Link to="/">Home</Link>
-              <Link to="/onboarding">Onboarding</Link>
             </nav>
           </div>
-
           <nav className="navbar__auth">
             <Link to="/login">Login</Link>
-            <Link to="/register" className="button-link">
+            <Link to="/onboarding" className="button-link">
               Register
             </Link>
           </nav>

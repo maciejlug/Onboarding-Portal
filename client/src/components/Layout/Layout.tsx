@@ -9,7 +9,9 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className="app-shell">
       <Navbar />
-      <main className="page-container">{children}</main>
+      <div>
+        <main className="page-container">{children}</main>
+      </div>
     </div>
   );
 }

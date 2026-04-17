@@ -14,11 +14,6 @@ a {
   text-decoration: none;
 }
 
-.page-width {
-  width: 80%;
-  margin: 0 auto;
-}
-
 .button-link,
 button {
   display: inline-block;
@@ -33,4 +28,9 @@ button {
 
 .button-link--secondary {
   background: #374151;
+}
+
+.page-width {
+  width: 80%;
+  margin: 0 auto;
 }
