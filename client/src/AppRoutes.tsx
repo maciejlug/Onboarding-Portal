@@ -5,10 +5,12 @@ import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 
 export default function AppRoutes() {
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/onboarding" element={<OnboardingPage />} />
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+    <div className="page-width">
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/onboarding" element={<OnboardingPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </div>
   );
 }

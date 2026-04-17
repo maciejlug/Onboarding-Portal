@@ -1,6 +1,5 @@
 .navbar-wrapper {
-  border-bottom: 1px solid #e5e7eb;
-  background: white;
+  background: var(--color-primary);
 }
 
 .navbar {
@@ -9,6 +8,11 @@
   justify-content: space-between;
   gap: 16px;
   padding: 18px 0;
+  color: var(--color-secondary);
+}
+
+.navbar a:hover {
+  color: var(--color-primary-hover);
 }
 
 .navbar__left {
