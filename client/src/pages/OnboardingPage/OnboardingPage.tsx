@@ -3,8 +3,8 @@ import type { SyntheticEvent } from "react";
 import {
   createOnboardingSession,
   getOnboardingSessions,
-} from "../services/onboardingApi";
-import type { OnboardingSession } from "../types/onboarding";
+} from "../../services/onboardingApi";
+import type { OnboardingSession } from "../../types/onboarding";
 
 export default function OnboardingPage() {
   const [sessions, setSessions] = useState<OnboardingSession[]>([]);

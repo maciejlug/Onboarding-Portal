@@ -1,0 +1,30 @@
+.navbar-wrapper {
+  border-bottom: 1px solid #e5e7eb;
+  background: white;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0;
+}
+
+.navbar__left {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.navbar__brand a {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.navbar__nav,
+.navbar__auth {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
