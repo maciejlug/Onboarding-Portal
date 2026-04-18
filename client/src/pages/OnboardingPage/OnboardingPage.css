@@ -1,0 +1,45 @@
+.onboarding-step {
+  display: flex;
+  flex-direction: column;
+  min-height: 620px;
+}
+
+.onboarding-step__header {
+  margin-bottom: 32px;
+}
+
+.onboarding-step__header h1 {
+  margin: 0 0 12px;
+  font-size: 28px;
+}
+
+.onboarding-step__header p {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.onboarding-step__body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 320px;
+}
+
+.form-error {
+  margin: 0;
+  color: #c0392b;
+}
+
+.onboarding-step__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 32px;
+}
