@@ -1,3 +1,5 @@
+import { Box, Button, Stack, TextField, Typography } from "@mui/material";
+
 type AccountFormData = {
   email: string;
   password: string;
@@ -17,70 +19,87 @@ export default function AccountStep({
   onNext,
   canGoNext,
 }: AccountStepProps) {
+  const emailError =
+    accountData.email.length > 0 &&
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(accountData.email);
+
+  const passwordMismatch =
+    accountData.confirmPassword.length > 0 &&
+    accountData.password !== accountData.confirmPassword;
+
   return (
-    <div className="onboarding-step">
-      <div className="onboarding-step__header">
-        <h1>Create account</h1>
-        <p>Start your onboarding by creating an account.</p>
-      </div>
+    <Box
+      sx={{
+        minHeight: 620,
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" sx={{ mb: 1 }}>
+          Create account
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Start your onboarding by creating an account.
+        </Typography>
+      </Box>
 
-      <div className="onboarding-step__body">
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={accountData.email}
-            onChange={(event) =>
-              setAccountData((prev) => ({
-                ...prev,
-                email: event.target.value,
-              }))
-            }
-          />
-        </div>
+      <Stack spacing={3} sx={{ maxWidth: 360, flex: 1 }}>
+        <TextField
+          label="Email"
+          type="email"
+          value={accountData.email}
+          onChange={(event) =>
+            setAccountData((prev) => ({
+              ...prev,
+              email: event.target.value,
+            }))
+          }
+          error={emailError}
+          helperText={emailError ? "Enter a valid email address." : ""}
+          fullWidth
+        />
 
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={accountData.password}
-            onChange={(event) =>
-              setAccountData((prev) => ({
-                ...prev,
-                password: event.target.value,
-              }))
-            }
-          />
-        </div>
+        <TextField
+          label="Password"
+          type="password"
+          value={accountData.password}
+          onChange={(event) =>
+            setAccountData((prev) => ({
+              ...prev,
+              password: event.target.value,
+            }))
+          }
+          fullWidth
+        />
 
-        <div className="form-group">
-          <label htmlFor="confirmPassword">Confirm password</label>
-          <input
-            id="confirmPassword"
-            type="password"
-            value={accountData.confirmPassword}
-            onChange={(event) =>
-              setAccountData((prev) => ({
-                ...prev,
-                confirmPassword: event.target.value,
-              }))
-            }
-          />
-        </div>
+        <TextField
+          label="Confirm password"
+          type="password"
+          value={accountData.confirmPassword}
+          onChange={(event) =>
+            setAccountData((prev) => ({
+              ...prev,
+              confirmPassword: event.target.value,
+            }))
+          }
+          error={passwordMismatch}
+          helperText={passwordMismatch ? "Passwords do not match." : " "}
+          fullWidth
+        />
+      </Stack>
 
-        {accountData.confirmPassword &&
-          accountData.password !== accountData.confirmPassword && (
-            <p className="form-error">Passwords do not match.</p>
-          )}
-      </div>
-
-      <div className="onboarding-step__actions">
-        <button onClick={onNext} disabled={!canGoNext}>
+      <Box
+        sx={{ display: "flex", justifyContent: "flex-end", pt: 4, mt: "auto" }}
+      >
+        <Button
+          variant="contained"
+          onClick={onNext}
+          disabled={!canGoNext || emailError}
+        >
           Next
-        </button>
-      </div>
-    </div>
+        </Button>
+      </Box>
+    </Box>
   );
 }
