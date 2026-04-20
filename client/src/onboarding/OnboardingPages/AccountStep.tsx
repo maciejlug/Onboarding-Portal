@@ -1,31 +1,32 @@
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
-
-type AccountFormData = {
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
-
-type AccountStepProps = {
-  accountData: AccountFormData;
-  setAccountData: React.Dispatch<React.SetStateAction<AccountFormData>>;
-  onNext: () => void;
-  canGoNext: boolean;
-};
+import type { AccountStepProps } from "../../types/onboarding";
 
 export default function AccountStep({
-  accountData,
-  setAccountData,
+  formData,
+  setFormData,
   onNext,
   canGoNext,
 }: AccountStepProps) {
   const emailError =
-    accountData.email.length > 0 &&
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(accountData.email);
+    formData.account.email.length > 0 &&
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.account.email);
 
   const passwordMismatch =
-    accountData.confirmPassword.length > 0 &&
-    accountData.password !== accountData.confirmPassword;
+    formData.account.confirmPassword.length > 0 &&
+    formData.account.password !== formData.account.confirmPassword;
+
+  const getPasswordErrorText = () => {
+    const len = formData.account.password.length;
+    if (len === 0) return "";
+    if (len < 8) return "Password is too short (min. 8 characters)";
+    if (len > 12) return "Password is too long (max. 12 characters)";
+    return "";
+  };
+
+  const isPasswordError =
+    formData.account.password.length > 0 &&
+    (formData.account.password.length < 8 ||
+      formData.account.password.length > 12);
 
   return (
     <Box
@@ -48,11 +49,14 @@ export default function AccountStep({
         <TextField
           label="Email"
           type="email"
-          value={accountData.email}
+          value={formData.account.email}
           onChange={(event) =>
-            setAccountData((prev) => ({
+            setFormData((prev) => ({
               ...prev,
-              email: event.target.value,
+              account: {
+                ...prev.account,
+                email: event.target.value,
+              },
             }))
           }
           error={emailError}
@@ -63,28 +67,36 @@ export default function AccountStep({
         <TextField
           label="Password"
           type="password"
-          value={accountData.password}
+          value={formData.account.password}
           onChange={(event) =>
-            setAccountData((prev) => ({
+            setFormData((prev) => ({
               ...prev,
-              password: event.target.value,
+              account: {
+                ...prev.account,
+                password: event.target.value,
+              },
             }))
           }
+          error={isPasswordError}
+          helperText={getPasswordErrorText()}
           fullWidth
         />
 
         <TextField
           label="Confirm password"
           type="password"
-          value={accountData.confirmPassword}
+          value={formData.account.confirmPassword}
           onChange={(event) =>
-            setAccountData((prev) => ({
+            setFormData((prev) => ({
               ...prev,
-              confirmPassword: event.target.value,
+              account: {
+                ...prev.account,
+                confirmPassword: event.target.value,
+              },
             }))
           }
           error={passwordMismatch}
-          helperText={passwordMismatch ? "Passwords do not match." : " "}
+          helperText={passwordMismatch ? "Passwords do not match." : ""}
           fullWidth
         />
       </Stack>

@@ -1,3 +1,6 @@
+import type { SetStateAction, Dispatch } from "react";
+
+//API types
 export type OnboardingSession = {
   id: number;
   status: string;
@@ -11,8 +14,36 @@ export type CreateOnboardingSessionPayload = {
   account_type: string;
 };
 
+// Step data types
 export type AccountFormData = {
   email: string;
   password: string;
   confirmPassword: string;
+};
+
+export type ProfileFormData = {
+  firstName: string;
+  lastName: string;
+  phone: string;
+};
+
+// Step component props
+export type AccountStepProps = {
+  formData: OnboardingFormData;
+  setFormData: Dispatch<SetStateAction<OnboardingFormData>>;
+  onNext: () => void;
+  canGoNext: boolean;
+};
+
+export type ProfileStepProps = {
+  formData: OnboardingFormData;
+  setFormData: Dispatch<SetStateAction<OnboardingFormData>>;
+  onNext: () => void;
+  canGoNext: boolean;
+};
+
+// Shared onboarding form state
+export type OnboardingFormData = {
+  account: AccountFormData;
+  profile: ProfileFormData;
 };
