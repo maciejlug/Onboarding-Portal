@@ -34,8 +34,6 @@ export function useOnboardingFlow() {
   }, [currentStep, formData]);
 
   function handleNext() {
-    if (!canGoNext) return;
-
     if (currentStep === ONBOARDING_STEPS.ACCOUNT) {
       setCurrentStep(ONBOARDING_STEPS.PROFILE);
       return;

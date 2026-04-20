@@ -1,100 +1,105 @@
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
-import type { ProfileStepProps } from "../../types/onboarding";
+import { Form, Formik } from "formik";
+import type { ProfileStepProps, ProfileFormData } from "../../types/onboarding";
+import { profileStepSchema } from "../validation/profileStepSchema";
 
 export default function ProfileStep({
   formData,
   setFormData,
   onNext,
-  canGoNext,
 }: ProfileStepProps) {
-  const getPhoneErrorText = () => {
-    const len = formData.profile.phone.length;
-    if (len === 0) return "";
-    if (!/^\+?[0-9]{7,15}$/.test(formData.profile.phone)) {
-      return "Invalid phone number format";
-    }
-    if (len < 7) return "Phone number is too short (min. 7 characters)";
-    if (len > 15) return "Phone number is too long (max. 15 characters)";
-    return "";
-  };
-
-  const phoneError =
-    formData.profile.phone.length > 0 &&
-    !/^\+?[0-9]{7,15}$/.test(formData.profile.phone);
-
   return (
-    <Box
-      sx={{
-        minHeight: 620,
-        display: "flex",
-        flexDirection: "column",
+    <Formik<ProfileFormData>
+      initialValues={formData}
+      enableReinitialize
+      validationSchema={profileStepSchema}
+      onSubmit={(values, { setSubmitting }) => {
+        setFormData(values);
+        onNext();
+        setSubmitting(false);
       }}
     >
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ mb: 1 }}>
-          Profile details
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Tell us a bit more about yourself.
-        </Typography>
-      </Box>
+      {({
+        values,
+        errors,
+        touched,
+        handleChange,
+        handleBlur,
+        isValid,
+        dirty,
+        isSubmitting,
+      }) => (
+        <Form noValidate>
+          <Box
+            sx={{
+              minHeight: 620,
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="h4" sx={{ mb: 1 }}>
+                Profile details
+              </Typography>
+              <Typography variant="body1" color="text.secondary">
+                Tell us a bit more about yourself.
+              </Typography>
+            </Box>
 
-      <Stack spacing={2} sx={{ maxWidth: 360, flex: 1 }}>
-        <TextField
-          label="First name"
-          value={formData.profile.firstName}
-          onChange={(event) =>
-            setFormData((prev) => ({
-              ...prev,
-              profile: {
-                ...prev.profile,
-                firstName: event.target.value,
-              },
-            }))
-          }
-          fullWidth
-        />
+            <Stack spacing={2} sx={{ maxWidth: 360, flex: 1 }}>
+              <TextField
+                label="First name"
+                name="firstName"
+                value={values.firstName}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={Boolean(touched.firstName && errors.firstName)}
+                helperText={touched.firstName ? errors.firstName : ""}
+                fullWidth
+              />
 
-        <TextField
-          label="Last name"
-          value={formData.profile.lastName}
-          onChange={(event) =>
-            setFormData((prev) => ({
-              ...prev,
-              profile: {
-                ...prev.profile,
-                lastName: event.target.value,
-              },
-            }))
-          }
-          fullWidth
-        />
+              <TextField
+                label="Last name"
+                name="lastName"
+                value={values.lastName}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={Boolean(touched.lastName && errors.lastName)}
+                helperText={touched.lastName ? errors.lastName : ""}
+                fullWidth
+              />
 
-        <TextField
-          label="Phone"
-          value={formData.profile.phone}
-          onChange={(event) =>
-            setFormData((prev) => ({
-              ...prev,
-              profile: {
-                ...prev.profile,
-                phone: event.target.value,
-              },
-            }))
-          }
-          error={phoneError}
-          helperText={getPhoneErrorText()}
-          fullWidth
-        />
-      </Stack>
+              <TextField
+                label="Phone"
+                name="phone"
+                value={values.phone}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={Boolean(touched.phone && errors.phone)}
+                helperText={touched.phone ? errors.phone : ""}
+                fullWidth
+              />
+            </Stack>
 
-      <Box
-        sx={{ display: "flex", justifyContent: "flex-end", pt: 4, mt: "auto" }}
-      >
-        <Button variant="contained" onClick={onNext} disabled={!canGoNext}>
-          Next
-        </Button>
-      </Box>
-    </Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                pt: 4,
+                mt: "auto",
+              }}
+            >
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={!dirty || !isValid || isSubmitting}
+              >
+                Next
+              </Button>
+            </Box>
+          </Box>
+        </Form>
+      )}
+    </Formik>
   );
 }

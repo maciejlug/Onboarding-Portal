@@ -29,17 +29,15 @@ export type ProfileFormData = {
 
 // Step component props
 export type AccountStepProps = {
-  formData: OnboardingFormData;
-  setFormData: Dispatch<SetStateAction<OnboardingFormData>>;
+  formData: AccountFormData;
+  setFormData: Dispatch<SetStateAction<AccountFormData>>;
   onNext: () => void;
-  canGoNext: boolean;
 };
 
 export type ProfileStepProps = {
-  formData: OnboardingFormData;
-  setFormData: Dispatch<SetStateAction<OnboardingFormData>>;
+  formData: ProfileFormData;
+  setFormData: Dispatch<SetStateAction<ProfileFormData>>;
   onNext: () => void;
-  canGoNext: boolean;
 };
 
 // Shared onboarding form state
