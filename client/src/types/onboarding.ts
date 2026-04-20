@@ -10,3 +10,9 @@ export type CreateOnboardingSessionPayload = {
   status: string;
   account_type: string;
 };
+
+export type AccountFormData = {
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
