@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { ONBOARDING_STEPS, type OnboardingStep } from "../steps";
 import type { OnboardingFormData } from "../../types/onboarding";
 
@@ -6,6 +6,18 @@ export function useOnboardingFlow() {
   const [currentStep, setCurrentStep] = useState<OnboardingStep>(
     ONBOARDING_STEPS.ACCOUNT,
   );
+
+  const [isEditingFromSummary, setIsEditingFromSummary] = useState(false);
+
+  function handleEditStep(step: OnboardingStep) {
+    setIsEditingFromSummary(true);
+    setCurrentStep(step);
+  }
+
+  function handleFinish() {
+    console.log("Finish onboarding", formData);
+    //todo: submit data to backend and handle response
+  }
 
   const [formData, setFormData] = useState<OnboardingFormData>({
     account: {
@@ -17,7 +29,7 @@ export function useOnboardingFlow() {
       firstName: "",
       lastName: "",
       gender: "",
-      nationality: "",
+      countryOfBirth: "",
       dateOfBirth: "",
     },
     contact: {
@@ -29,20 +41,13 @@ export function useOnboardingFlow() {
     },
   });
 
-  const canGoNext = useMemo(() => {
-    if (currentStep === ONBOARDING_STEPS.ACCOUNT) {
-      return (
-        formData.account.email.trim() !== "" &&
-        formData.account.password.trim() !== "" &&
-        formData.account.confirmPassword.trim() !== "" &&
-        formData.account.password === formData.account.confirmPassword
-      );
+  function handleNext() {
+    if (isEditingFromSummary) {
+      setCurrentStep(ONBOARDING_STEPS.SUMMARY);
+      setIsEditingFromSummary(false);
+      return;
     }
 
-    return true;
-  }, [currentStep, formData]);
-
-  function handleNext() {
     if (currentStep === ONBOARDING_STEPS.ACCOUNT) {
       setCurrentStep(ONBOARDING_STEPS.PROFILE);
       return;
@@ -62,7 +67,8 @@ export function useOnboardingFlow() {
     currentStep,
     formData,
     setFormData,
-    canGoNext,
     handleNext,
+    handleEditStep,
+    handleFinish,
   };
 }

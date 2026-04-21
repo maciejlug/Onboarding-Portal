@@ -6,6 +6,7 @@ export const profileStepSchema = Yup.object({
   gender: Yup.string()
     .oneOf(["male", "female", "prefer_not_to_say"], "Select a valid option.")
     .required("Gender is required."),
+  countryOfBirth: Yup.string().required("Country of birth is required."),
   dateOfBirth: Yup.string()
     .required("Date of birth is required.")
     .test(

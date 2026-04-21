@@ -5,10 +5,17 @@ import ProfileStep from "../../onboarding/OnboardingPages/ProfileStep";
 import ContactStep from "../../onboarding/OnboardingPages/ContactStep";
 import "./OnboardingPage.css";
 import { useOnboardingFlow } from "../../onboarding/hooks/useOnboardingFlow";
+import SummaryStep from "../../onboarding/OnboardingPages/SymmaryStep";
 
 export default function OnboardingPage() {
-  const { currentStep, formData, setFormData, handleNext } =
-    useOnboardingFlow();
+  const {
+    currentStep,
+    formData,
+    setFormData,
+    handleNext,
+    handleEditStep,
+    handleFinish,
+  } = useOnboardingFlow();
 
   const stepMap: Record<OnboardingStep, React.ReactNode> = {
     [ONBOARDING_STEPS.ACCOUNT]: (
@@ -32,7 +39,13 @@ export default function OnboardingPage() {
         onNext={handleNext}
       />
     ),
-    [ONBOARDING_STEPS.SUMMARY]: <div>Summary step</div>,
+    [ONBOARDING_STEPS.SUMMARY]: (
+      <SummaryStep
+        formData={formData}
+        onEditStep={handleEditStep}
+        onFinish={handleFinish}
+      />
+    ),
   };
 
   return <StepContainer>{stepMap[currentStep]}</StepContainer>;

@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Box,
   Button,
   FormControl,
@@ -13,6 +14,7 @@ import {
 import { Form, Formik } from "formik";
 import type { ProfileFormData, ProfileStepProps } from "../../types/onboarding";
 import { profileStepSchema } from "../validation/profileStepSchema";
+import { countries } from "../data/countries";
 
 export default function ProfileStep({
   formData,
@@ -40,8 +42,8 @@ export default function ProfileStep({
         handleChange,
         handleBlur,
         isValid,
-        dirty,
         isSubmitting,
+        setFieldValue,
       }) => (
         <Form noValidate>
           <Box
@@ -108,6 +110,29 @@ export default function ProfileStep({
                 </FormHelperText>
               </FormControl>
 
+              <Autocomplete
+                options={countries as readonly string[]}
+                value={values.countryOfBirth || null}
+                onChange={(_, newValue) => {
+                  setFieldValue("countryOfBirth", newValue ?? "");
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Country of birth"
+                    name="countryOfBirth"
+                    onBlur={handleBlur}
+                    error={Boolean(
+                      touched.countryOfBirth && errors.countryOfBirth,
+                    )}
+                    helperText={
+                      touched.countryOfBirth ? errors.countryOfBirth : ""
+                    }
+                    fullWidth
+                  />
+                )}
+              />
+
               <TextField
                 label="Date of birth"
                 name="dateOfBirth"
@@ -135,7 +160,7 @@ export default function ProfileStep({
               <Button
                 type="submit"
                 variant="contained"
-                disabled={!dirty || !isValid || isSubmitting}
+                disabled={!isValid || isSubmitting}
               >
                 Next
               </Button>

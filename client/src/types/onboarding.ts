@@ -1,4 +1,5 @@
 import type { SetStateAction, Dispatch } from "react";
+import type { OnboardingStep } from "../onboarding/steps";
 
 //API types
 export type OnboardingSession = {
@@ -25,7 +26,7 @@ export type ProfileFormData = {
   firstName: string;
   lastName: string;
   gender: "male" | "female" | "prefer_not_to_say" | "";
-  nationality: string;
+  countryOfBirth: string;
   dateOfBirth: string;
 };
 
@@ -54,6 +55,12 @@ export type ContactStepProps = {
   formData: ContactFormData;
   setFormData: Dispatch<SetStateAction<OnboardingFormData>>;
   onNext: () => void;
+};
+
+export type SummaryStepProps = {
+  formData: OnboardingFormData;
+  onEditStep: (step: OnboardingStep) => void;
+  onFinish: () => void;
 };
 
 // Shared onboarding form state

@@ -37,7 +37,6 @@ export default function ContactStep({
         handleChange,
         handleBlur,
         isValid,
-        dirty,
         isSubmitting,
         setFieldValue,
       }) => (
@@ -138,7 +137,7 @@ export default function ContactStep({
               <Button
                 type="submit"
                 variant="contained"
-                disabled={!dirty || !isValid || isSubmitting}
+                disabled={!isValid || isSubmitting}
               >
                 Next
               </Button>

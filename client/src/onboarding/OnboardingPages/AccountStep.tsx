@@ -12,6 +12,7 @@ export default function AccountStep({
     <Formik<AccountFormData>
       initialValues={formData}
       enableReinitialize
+      validateOnMount
       validationSchema={accountStepSchema}
       onSubmit={(values, { setSubmitting }) => {
         setFormData((prev) => ({
@@ -29,7 +30,6 @@ export default function AccountStep({
         handleChange,
         handleBlur,
         isValid,
-        dirty,
         isSubmitting,
       }) => (
         <Form noValidate>
@@ -98,7 +98,7 @@ export default function AccountStep({
               <Button
                 type="submit"
                 variant="contained"
-                disabled={!dirty || !isValid || isSubmitting}
+                disabled={!isValid || isSubmitting}
               >
                 Next
               </Button>
