@@ -13,9 +13,13 @@ export default function AccountStep({
       initialValues={formData}
       enableReinitialize
       validationSchema={accountStepSchema}
-      onSubmit={(values) => {
-        setFormData(values);
+      onSubmit={(values, { setSubmitting }) => {
+        setFormData((prev) => ({
+          ...prev,
+          account: values,
+        }));
         onNext();
+        setSubmitting(false);
       }}
     >
       {({

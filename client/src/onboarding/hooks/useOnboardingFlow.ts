@@ -16,7 +16,16 @@ export function useOnboardingFlow() {
     profile: {
       firstName: "",
       lastName: "",
+      gender: "",
+      nationality: "",
+      dateOfBirth: "",
+    },
+    contact: {
       phone: "",
+      street: "",
+      city: "",
+      postalCode: "",
+      country: "",
     },
   });
 
@@ -40,11 +49,11 @@ export function useOnboardingFlow() {
     }
 
     if (currentStep === ONBOARDING_STEPS.PROFILE) {
-      setCurrentStep(ONBOARDING_STEPS.ACCOUNT_TYPE);
+      setCurrentStep(ONBOARDING_STEPS.CONTACT);
       return;
     }
 
-    if (currentStep === ONBOARDING_STEPS.ACCOUNT_TYPE) {
+    if (currentStep === ONBOARDING_STEPS.CONTACT) {
       setCurrentStep(ONBOARDING_STEPS.SUMMARY);
     }
   }

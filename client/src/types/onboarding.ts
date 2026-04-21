@@ -29,16 +29,30 @@ export type ProfileFormData = {
   dateOfBirth: string;
 };
 
+export type ContactFormData = {
+  phone: string;
+  street: string;
+  city: string;
+  postalCode: string;
+  country: string;
+};
+
 // Step component props
 export type AccountStepProps = {
   formData: AccountFormData;
-  setFormData: Dispatch<SetStateAction<AccountFormData>>;
+  setFormData: Dispatch<SetStateAction<OnboardingFormData>>;
   onNext: () => void;
 };
 
 export type ProfileStepProps = {
   formData: ProfileFormData;
-  setFormData: React.Dispatch<React.SetStateAction<ProfileFormData>>;
+  setFormData: Dispatch<SetStateAction<OnboardingFormData>>;
+  onNext: () => void;
+};
+
+export type ContactStepProps = {
+  formData: ContactFormData;
+  setFormData: Dispatch<SetStateAction<OnboardingFormData>>;
   onNext: () => void;
 };
 
@@ -46,4 +60,5 @@ export type ProfileStepProps = {
 export type OnboardingFormData = {
   account: AccountFormData;
   profile: ProfileFormData;
+  contact: ContactFormData;
 };

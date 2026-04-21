@@ -1,7 +1,7 @@
 export const ONBOARDING_STEPS = {
   ACCOUNT: 1,
   PROFILE: 2,
-  ACCOUNT_TYPE: 3,
+  CONTACT: 3,
   SUMMARY: 4,
 } as const;
 

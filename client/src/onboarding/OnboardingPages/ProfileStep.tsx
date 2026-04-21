@@ -9,12 +9,10 @@ import {
   Stack,
   TextField,
   Typography,
-  Autocomplete,
 } from "@mui/material";
 import { Form, Formik } from "formik";
 import type { ProfileFormData, ProfileStepProps } from "../../types/onboarding";
 import { profileStepSchema } from "../validation/profileStepSchema";
-import { nationalities } from "../data/nationalities";
 
 export default function ProfileStep({
   formData,
@@ -27,7 +25,10 @@ export default function ProfileStep({
       enableReinitialize
       validationSchema={profileStepSchema}
       onSubmit={(values, { setSubmitting }) => {
-        setFormData(values);
+        setFormData((prev) => ({
+          ...prev,
+          profile: values,
+        }));
         onNext();
         setSubmitting(false);
       }}
@@ -41,7 +42,6 @@ export default function ProfileStep({
         isValid,
         dirty,
         isSubmitting,
-        setFieldValue,
       }) => (
         <Form noValidate>
           <Box
@@ -107,25 +107,6 @@ export default function ProfileStep({
                   {touched.gender ? errors.gender : ""}
                 </FormHelperText>
               </FormControl>
-
-              <Autocomplete
-                options={nationalities}
-                value={values.nationality || null}
-                onChange={(_, newValue) => {
-                  setFieldValue("nationality", newValue ?? "");
-                }}
-                onBlur={handleBlur}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Nationality"
-                    name="nationality"
-                    error={Boolean(touched.nationality && errors.nationality)}
-                    helperText={touched.nationality ? errors.nationality : ""}
-                    fullWidth
-                  />
-                )}
-              />
 
               <TextField
                 label="Date of birth"

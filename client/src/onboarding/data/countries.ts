@@ -1,4 +1,4 @@
-export const nationalities = [
+export const countries = [
   "Polish",
   "German",
   "Ukrainian",
