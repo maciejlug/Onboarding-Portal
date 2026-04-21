@@ -1,0 +1,16 @@
+export const nationalities = [
+  "Polish",
+  "German",
+  "Ukrainian",
+  "French",
+  "Italian",
+  "Spanish",
+  "British",
+  "American",
+  "Canadian",
+  "Czech",
+  "Slovak",
+  "Lithuanian",
+  "Latvian",
+  "Estonian",
+] as const;

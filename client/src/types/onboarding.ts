@@ -24,7 +24,9 @@ export type AccountFormData = {
 export type ProfileFormData = {
   firstName: string;
   lastName: string;
-  phone: string;
+  gender: "male" | "female" | "prefer_not_to_say" | "";
+  nationality: string;
+  dateOfBirth: string;
 };
 
 // Step component props
@@ -36,7 +38,7 @@ export type AccountStepProps = {
 
 export type ProfileStepProps = {
   formData: ProfileFormData;
-  setFormData: Dispatch<SetStateAction<ProfileFormData>>;
+  setFormData: React.Dispatch<React.SetStateAction<ProfileFormData>>;
   onNext: () => void;
 };
 

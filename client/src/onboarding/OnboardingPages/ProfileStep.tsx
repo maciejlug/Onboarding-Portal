@@ -1,7 +1,20 @@
-import { Box, Button, Stack, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Typography,
+  Autocomplete,
+} from "@mui/material";
 import { Form, Formik } from "formik";
-import type { ProfileStepProps, ProfileFormData } from "../../types/onboarding";
+import type { ProfileFormData, ProfileStepProps } from "../../types/onboarding";
 import { profileStepSchema } from "../validation/profileStepSchema";
+import { nationalities } from "../data/nationalities";
 
 export default function ProfileStep({
   formData,
@@ -28,6 +41,7 @@ export default function ProfileStep({
         isValid,
         dirty,
         isSubmitting,
+        setFieldValue,
       }) => (
         <Form noValidate>
           <Box
@@ -39,7 +53,7 @@ export default function ProfileStep({
           >
             <Box sx={{ mb: 4 }}>
               <Typography variant="h4" sx={{ mb: 1 }}>
-                Profile details
+                About you
               </Typography>
               <Typography variant="body1" color="text.secondary">
                 Tell us a bit more about yourself.
@@ -69,14 +83,62 @@ export default function ProfileStep({
                 fullWidth
               />
 
+              <FormControl
+                fullWidth
+                error={Boolean(touched.gender && errors.gender)}
+              >
+                <InputLabel id="gender-label">Gender</InputLabel>
+                <Select
+                  labelId="gender-label"
+                  id="gender"
+                  name="gender"
+                  value={values.gender}
+                  label="Gender"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                >
+                  <MenuItem value="male">Male</MenuItem>
+                  <MenuItem value="female">Female</MenuItem>
+                  <MenuItem value="prefer_not_to_say">
+                    Prefer not to say
+                  </MenuItem>
+                </Select>
+                <FormHelperText>
+                  {touched.gender ? errors.gender : ""}
+                </FormHelperText>
+              </FormControl>
+
+              <Autocomplete
+                options={nationalities}
+                value={values.nationality || null}
+                onChange={(_, newValue) => {
+                  setFieldValue("nationality", newValue ?? "");
+                }}
+                onBlur={handleBlur}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Nationality"
+                    name="nationality"
+                    error={Boolean(touched.nationality && errors.nationality)}
+                    helperText={touched.nationality ? errors.nationality : ""}
+                    fullWidth
+                  />
+                )}
+              />
+
               <TextField
-                label="Phone"
-                name="phone"
-                value={values.phone}
+                label="Date of birth"
+                name="dateOfBirth"
+                type="date"
+                value={values.dateOfBirth}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                error={Boolean(touched.phone && errors.phone)}
-                helperText={touched.phone ? errors.phone : ""}
+                error={Boolean(touched.dateOfBirth && errors.dateOfBirth)}
+                helperText={touched.dateOfBirth ? errors.dateOfBirth : ""}
+                slotProps={{
+                  inputLabel: { shrink: true },
+                }}
                 fullWidth
               />
             </Stack>

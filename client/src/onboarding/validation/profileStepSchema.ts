@@ -3,7 +3,18 @@ import * as Yup from "yup";
 export const profileStepSchema = Yup.object({
   firstName: Yup.string().required("First name is required."),
   lastName: Yup.string().required("Last name is required."),
-  phone: Yup.string()
-    .matches(/^[0-9]{9,15}$/, "Phone number must contain only digits.")
-    .required("Phone number is required."),
+  gender: Yup.string()
+    .oneOf(["male", "female", "prefer_not_to_say"], "Select a valid option.")
+    .required("Gender is required."),
+  nationality: Yup.string().required("Nationality is required."),
+  dateOfBirth: Yup.string()
+    .required("Date of birth is required.")
+    .test(
+      "not-in-future",
+      "Date of birth cannot be in the future.",
+      (value) => {
+        if (!value) return false;
+        return new Date(value) <= new Date();
+      },
+    ),
 });
