@@ -5,7 +5,7 @@ import ProfileStep from "../../onboarding/OnboardingPages/ProfileStep";
 import ContactStep from "../../onboarding/OnboardingPages/ContactStep";
 import "./OnboardingPage.css";
 import { useOnboardingFlow } from "../../onboarding/hooks/useOnboardingFlow";
-import SummaryStep from "../../onboarding/OnboardingPages/SymmaryStep";
+import SummaryStep from "../../onboarding/OnboardingPages/SummaryStep";
 
 export default function OnboardingPage() {
   const {
