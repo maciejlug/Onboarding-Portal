@@ -20,6 +20,8 @@ export default function ProfileStep({
   formData,
   setFormData,
   onNext,
+  onBack,
+  isEditingFromSummary,
 }: ProfileStepProps) {
   return (
     <Formik<ProfileFormData>
@@ -152,17 +154,29 @@ export default function ProfileStep({
             <Box
               sx={{
                 display: "flex",
-                justifyContent: "flex-end",
+                justifyContent: isEditingFromSummary
+                  ? "flex-end"
+                  : "space-between",
                 pt: 4,
                 mt: "auto",
               }}
             >
+              {!isEditingFromSummary && (
+                <Button
+                  type="button"
+                  variant="contained"
+                  disabled={!isValid || isSubmitting}
+                  onClick={onBack}
+                >
+                  Back
+                </Button>
+              )}
               <Button
                 type="submit"
                 variant="contained"
                 disabled={!isValid || isSubmitting}
               >
-                Next
+                {isEditingFromSummary ? "Save" : "Next"}
               </Button>
             </Box>
           </Box>

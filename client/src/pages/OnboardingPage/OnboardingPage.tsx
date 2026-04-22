@@ -15,6 +15,8 @@ export default function OnboardingPage() {
     handleNext,
     handleEditStep,
     handleFinish,
+    handleBack,
+    isEditingFromSummary,
   } = useOnboardingFlow();
 
   const stepMap: Record<OnboardingStep, React.ReactNode> = {
@@ -30,6 +32,8 @@ export default function OnboardingPage() {
         formData={formData.profile}
         setFormData={setFormData}
         onNext={handleNext}
+        onBack={handleBack}
+        isEditingFromSummary={isEditingFromSummary}
       />
     ),
     [ONBOARDING_STEPS.CONTACT]: (
@@ -37,6 +41,8 @@ export default function OnboardingPage() {
         formData={formData.contact}
         setFormData={setFormData}
         onNext={handleNext}
+        onBack={handleBack}
+        isEditingFromSummary={isEditingFromSummary}
       />
     ),
     [ONBOARDING_STEPS.SUMMARY]: (

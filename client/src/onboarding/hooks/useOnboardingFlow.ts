@@ -65,11 +65,35 @@ export function useOnboardingFlow() {
     }
   }
 
+  function handleBack() {
+    if (isEditingFromSummary) {
+      setCurrentStep(ONBOARDING_STEPS.SUMMARY);
+      setIsEditingFromSummary(false);
+      return;
+    }
+
+    if (currentStep === ONBOARDING_STEPS.PROFILE) {
+      setCurrentStep(ONBOARDING_STEPS.ACCOUNT);
+      return;
+    }
+
+    if (currentStep === ONBOARDING_STEPS.CONTACT) {
+      setCurrentStep(ONBOARDING_STEPS.PROFILE);
+      return;
+    }
+
+    if (currentStep === ONBOARDING_STEPS.SUMMARY) {
+      setCurrentStep(ONBOARDING_STEPS.CONTACT);
+    }
+  }
+
   return {
     currentStep,
     formData,
+    isEditingFromSummary,
     setFormData,
     handleNext,
+    handleBack,
     handleEditStep,
     handleFinish,
   };

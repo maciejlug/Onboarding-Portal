@@ -51,12 +51,16 @@ export type ProfileStepProps = {
   formData: ProfileFormData;
   setFormData: Dispatch<SetStateAction<OnboardingFormData>>;
   onNext: () => void;
+  onBack: () => void;
+  isEditingFromSummary: boolean;
 };
 
 export type ContactStepProps = {
   formData: ContactFormData;
   setFormData: Dispatch<SetStateAction<OnboardingFormData>>;
   onNext: () => void;
+  onBack: () => void;
+  isEditingFromSummary: boolean;
 };
 
 export type SummaryStepProps = {

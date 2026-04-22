@@ -15,6 +15,8 @@ export default function ContactStep({
   formData,
   setFormData,
   onNext,
+  onBack,
+  isEditingFromSummary,
 }: ContactStepProps) {
   return (
     <Formik<ContactFormData>
@@ -125,21 +127,32 @@ export default function ContactStep({
                 )}
               />
             </Stack>
-
             <Box
               sx={{
                 display: "flex",
-                justifyContent: "flex-end",
+                justifyContent: isEditingFromSummary
+                  ? "flex-end"
+                  : "space-between",
                 pt: 4,
                 mt: "auto",
               }}
             >
+              {!isEditingFromSummary && (
+                <Button
+                  type="button"
+                  variant="contained"
+                  disabled={!isValid || isSubmitting}
+                  onClick={onBack}
+                >
+                  Back
+                </Button>
+              )}
               <Button
                 type="submit"
                 variant="contained"
                 disabled={!isValid || isSubmitting}
               >
-                Next
+                {isEditingFromSummary ? "Save" : "Next"}
               </Button>
             </Box>
           </Box>
