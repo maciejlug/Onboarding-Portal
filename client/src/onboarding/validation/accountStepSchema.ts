@@ -10,4 +10,12 @@ export const accountStepSchema = Yup.object({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords do not match.")
     .required("Confirm your password."),
+  acceptTerms: Yup.boolean().oneOf(
+    [true],
+    "You must accept the terms and conditions.",
+  ),
+  acceptPrivacyPolicy: Yup.boolean().oneOf(
+    [true],
+    "You must accept the privacy policy.",
+  ),
 });

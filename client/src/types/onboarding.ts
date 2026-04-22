@@ -20,6 +20,8 @@ export type AccountFormData = {
   email: string;
   password: string;
   confirmPassword: string;
+  acceptTerms: boolean;
+  acceptPrivacyPolicy: boolean;
 };
 
 export type ProfileFormData = {

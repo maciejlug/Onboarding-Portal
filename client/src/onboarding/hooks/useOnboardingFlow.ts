@@ -24,6 +24,8 @@ export function useOnboardingFlow() {
       email: "",
       password: "",
       confirmPassword: "",
+      acceptTerms: false,
+      acceptPrivacyPolicy: false,
     },
     profile: {
       firstName: "",

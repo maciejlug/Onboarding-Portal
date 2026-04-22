@@ -1,4 +1,13 @@
-import { Box, Button, Stack, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  FormHelperText,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { Formik, Form } from "formik";
 import type { AccountFormData, AccountStepProps } from "../../types/onboarding";
 import { accountStepSchema } from "../validation/accountStepSchema";
@@ -31,6 +40,7 @@ export default function AccountStep({
         handleBlur,
         isValid,
         isSubmitting,
+        setFieldValue,
       }) => (
         <Form noValidate>
           <Box
@@ -85,6 +95,48 @@ export default function AccountStep({
                 }
                 fullWidth
               />
+
+              <Box>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="acceptTerms"
+                      checked={values.acceptTerms}
+                      onChange={(event) =>
+                        setFieldValue("acceptTerms", event.target.checked)
+                      }
+                      onBlur={handleBlur}
+                    />
+                  }
+                  label="I accept the terms and conditions"
+                />
+                {touched.acceptTerms && errors.acceptTerms && (
+                  <FormHelperText error>{errors.acceptTerms}</FormHelperText>
+                )}
+              </Box>
+
+              <Box>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      name="acceptPrivacyPolicy"
+                      checked={values.acceptPrivacyPolicy}
+                      onChange={(event) =>
+                        setFieldValue(
+                          "acceptPrivacyPolicy",
+                          event.target.checked,
+                        )
+                      }
+                    />
+                  }
+                  label="I accept the privacy policy"
+                />
+                {touched.acceptPrivacyPolicy && errors.acceptPrivacyPolicy && (
+                  <FormHelperText error>
+                    {errors.acceptPrivacyPolicy}
+                  </FormHelperText>
+                )}
+              </Box>
             </Stack>
 
             <Box
