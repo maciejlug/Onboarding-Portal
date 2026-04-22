@@ -41,123 +41,129 @@ export default function ContactStep({
         isValid,
         isSubmitting,
         setFieldValue,
-      }) => (
-        <Form noValidate>
-          <Box
-            sx={{
-              minHeight: 620,
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h4" sx={{ mb: 1 }}>
-                Contact details
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Add your phone number and address information.
-              </Typography>
-            </Box>
+      }) => {
+        const isButtonDisabled =
+          !values.phone.trim() ||
+          !values.street.trim() ||
+          !values.city.trim() ||
+          !values.postalCode.trim() ||
+          !values.country.trim() ||
+          !isValid ||
+          isSubmitting;
 
-            <Stack spacing={2} sx={{ maxWidth: 420, flex: 1 }}>
-              <TextField
-                label="Phone number"
-                name="phone"
-                type="tel"
-                value={values.phone}
-                onChange={(event) => {
-                  const digitsOnly = event.target.value.replace(/\D/g, "");
-                  setFieldValue("phone", digitsOnly);
-                }}
-                onBlur={handleBlur}
-                error={Boolean(touched.phone && errors.phone)}
-                helperText={touched.phone ? errors.phone : ""}
-                fullWidth
-              />
-
-              <TextField
-                label="Street address"
-                name="street"
-                value={values.street}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={Boolean(touched.street && errors.street)}
-                helperText={touched.street ? errors.street : ""}
-                fullWidth
-              />
-
-              <TextField
-                label="City"
-                name="city"
-                value={values.city}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={Boolean(touched.city && errors.city)}
-                helperText={touched.city ? errors.city : ""}
-                fullWidth
-              />
-
-              <TextField
-                label="Postal code"
-                name="postalCode"
-                value={values.postalCode}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={Boolean(touched.postalCode && errors.postalCode)}
-                helperText={touched.postalCode ? errors.postalCode : ""}
-                fullWidth
-              />
-
-              <Autocomplete
-                options={countries as readonly string[]}
-                value={values.country || null}
-                onChange={(_, newValue) => {
-                  setFieldValue("country", newValue ?? "");
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Country"
-                    name="country"
-                    onBlur={handleBlur}
-                    error={Boolean(touched.country && errors.country)}
-                    helperText={touched.country ? errors.country : ""}
-                    fullWidth
-                  />
-                )}
-              />
-            </Stack>
+        return (
+          <Form noValidate>
             <Box
               sx={{
+                minHeight: 620,
                 display: "flex",
-                justifyContent: isEditingFromSummary
-                  ? "flex-end"
-                  : "space-between",
-                pt: 4,
-                mt: "auto",
+                flexDirection: "column",
               }}
             >
-              {!isEditingFromSummary && (
-                <Button
-                  type="button"
-                  variant="contained"
-                  disabled={!isValid || isSubmitting}
-                  onClick={onBack}
-                >
-                  Back
-                </Button>
-              )}
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={!isValid || isSubmitting}
+              <Box sx={{ mb: 4 }}>
+                <Typography variant="h4" sx={{ mb: 1 }}>
+                  Contact details
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  Add your phone number and address information.
+                </Typography>
+              </Box>
+
+              <Stack spacing={2} sx={{ maxWidth: 420, flex: 1 }}>
+                <TextField
+                  label="Phone number"
+                  name="phone"
+                  type="tel"
+                  value={values.phone}
+                  onChange={(event) => {
+                    const digitsOnly = event.target.value.replace(/\D/g, "");
+                    setFieldValue("phone", digitsOnly);
+                  }}
+                  onBlur={handleBlur}
+                  error={Boolean(touched.phone && errors.phone)}
+                  helperText={touched.phone ? errors.phone : ""}
+                  fullWidth
+                />
+
+                <TextField
+                  label="Street address"
+                  name="street"
+                  value={values.street}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={Boolean(touched.street && errors.street)}
+                  helperText={touched.street ? errors.street : ""}
+                  fullWidth
+                />
+
+                <TextField
+                  label="City"
+                  name="city"
+                  value={values.city}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={Boolean(touched.city && errors.city)}
+                  helperText={touched.city ? errors.city : ""}
+                  fullWidth
+                />
+
+                <TextField
+                  label="Postal code"
+                  name="postalCode"
+                  value={values.postalCode}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={Boolean(touched.postalCode && errors.postalCode)}
+                  helperText={touched.postalCode ? errors.postalCode : ""}
+                  fullWidth
+                />
+
+                <Autocomplete
+                  options={countries as readonly string[]}
+                  value={values.country || null}
+                  onChange={(_, newValue) => {
+                    setFieldValue("country", newValue ?? "");
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Country"
+                      name="country"
+                      onBlur={handleBlur}
+                      error={Boolean(touched.country && errors.country)}
+                      helperText={touched.country ? errors.country : ""}
+                      fullWidth
+                    />
+                  )}
+                />
+              </Stack>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: isEditingFromSummary
+                    ? "flex-end"
+                    : "space-between",
+                  pt: 4,
+                  mt: "auto",
+                }}
               >
-                {isEditingFromSummary ? "Save" : "Next"}
-              </Button>
+                {!isEditingFromSummary && (
+                  <Button type="button" variant="contained" onClick={onBack}>
+                    Back
+                  </Button>
+                )}
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={isButtonDisabled}
+                >
+                  {isEditingFromSummary ? "Save" : "Next"}
+                </Button>
+              </Box>
             </Box>
-          </Box>
-        </Form>
-      )}
+          </Form>
+        );
+      }}
     </Formik>
   );
 }

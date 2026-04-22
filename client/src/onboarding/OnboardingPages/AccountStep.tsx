@@ -41,123 +41,135 @@ export default function AccountStep({
         isValid,
         isSubmitting,
         setFieldValue,
-      }) => (
-        <Form noValidate>
-          <Box
-            sx={{ minHeight: 620, display: "flex", flexDirection: "column" }}
-          >
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h4" sx={{ mb: 1 }}>
-                Create account
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Start your onboarding by creating an account.
-              </Typography>
-            </Box>
+      }) => {
+        const isButtonDisabled =
+          !values.email.trim() ||
+          !values.password.trim() ||
+          !values.confirmPassword.trim() ||
+          !values.acceptTerms ||
+          !values.acceptPrivacyPolicy ||
+          !isValid ||
+          isSubmitting;
 
-            <Stack spacing={2} sx={{ maxWidth: 360, flex: 1 }}>
-              <TextField
-                label="Email"
-                name="email"
-                type="email"
-                value={values.email}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={Boolean(touched.email && errors.email)}
-                helperText={touched.email ? errors.email : ""}
-                fullWidth
-              />
-
-              <TextField
-                label="Password"
-                name="password"
-                type="password"
-                value={values.password}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={Boolean(touched.password && errors.password)}
-                helperText={touched.password ? errors.password : ""}
-                fullWidth
-              />
-
-              <TextField
-                label="Confirm password"
-                name="confirmPassword"
-                type="password"
-                value={values.confirmPassword}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={Boolean(
-                  touched.confirmPassword && errors.confirmPassword,
-                )}
-                helperText={
-                  touched.confirmPassword ? errors.confirmPassword : ""
-                }
-                fullWidth
-              />
-
-              <Box>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      name="acceptTerms"
-                      checked={values.acceptTerms}
-                      onChange={(event) =>
-                        setFieldValue("acceptTerms", event.target.checked)
-                      }
-                      onBlur={handleBlur}
-                    />
-                  }
-                  label="I accept the terms and conditions"
-                />
-                {touched.acceptTerms && errors.acceptTerms && (
-                  <FormHelperText error>{errors.acceptTerms}</FormHelperText>
-                )}
-              </Box>
-
-              <Box>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      name="acceptPrivacyPolicy"
-                      checked={values.acceptPrivacyPolicy}
-                      onChange={(event) =>
-                        setFieldValue(
-                          "acceptPrivacyPolicy",
-                          event.target.checked,
-                        )
-                      }
-                    />
-                  }
-                  label="I accept the privacy policy"
-                />
-                {touched.acceptPrivacyPolicy && errors.acceptPrivacyPolicy && (
-                  <FormHelperText error>
-                    {errors.acceptPrivacyPolicy}
-                  </FormHelperText>
-                )}
-              </Box>
-            </Stack>
-
+        return (
+          <Form noValidate>
             <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                pt: 4,
-                mt: "auto",
-              }}
+              sx={{ minHeight: 620, display: "flex", flexDirection: "column" }}
             >
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={!isValid || isSubmitting}
+              <Box sx={{ mb: 4 }}>
+                <Typography variant="h4" sx={{ mb: 1 }}>
+                  Create account
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  Start your onboarding by creating an account.
+                </Typography>
+              </Box>
+
+              <Stack spacing={2} sx={{ maxWidth: 360, flex: 1 }}>
+                <TextField
+                  label="Email"
+                  name="email"
+                  type="email"
+                  value={values.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={Boolean(touched.email && errors.email)}
+                  helperText={touched.email ? errors.email : ""}
+                  fullWidth
+                />
+
+                <TextField
+                  label="Password"
+                  name="password"
+                  type="password"
+                  value={values.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={Boolean(touched.password && errors.password)}
+                  helperText={touched.password ? errors.password : ""}
+                  fullWidth
+                />
+
+                <TextField
+                  label="Confirm password"
+                  name="confirmPassword"
+                  type="password"
+                  value={values.confirmPassword}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={Boolean(
+                    touched.confirmPassword && errors.confirmPassword,
+                  )}
+                  helperText={
+                    touched.confirmPassword ? errors.confirmPassword : ""
+                  }
+                  fullWidth
+                />
+
+                <Box>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        name="acceptTerms"
+                        checked={values.acceptTerms}
+                        onChange={(event) =>
+                          setFieldValue("acceptTerms", event.target.checked)
+                        }
+                        onBlur={handleBlur}
+                      />
+                    }
+                    label="I accept the terms and conditions"
+                  />
+                  {touched.acceptTerms && errors.acceptTerms && (
+                    <FormHelperText error>{errors.acceptTerms}</FormHelperText>
+                  )}
+                </Box>
+
+                <Box>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        name="acceptPrivacyPolicy"
+                        checked={values.acceptPrivacyPolicy}
+                        onChange={(event) =>
+                          setFieldValue(
+                            "acceptPrivacyPolicy",
+                            event.target.checked,
+                          )
+                        }
+                      />
+                    }
+                    label="I accept the privacy policy"
+                  />
+                  {touched.acceptPrivacyPolicy &&
+                    errors.acceptPrivacyPolicy && (
+                      <FormHelperText error>
+                        {errors.acceptPrivacyPolicy}
+                      </FormHelperText>
+                    )}
+                </Box>
+              </Stack>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  pt: 4,
+                  mt: "auto",
+                }}
               >
-                Next
-              </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={isButtonDisabled}
+                >
+                  Next
+                </Button>
+              </Box>
             </Box>
-          </Box>
-        </Form>
-      )}
+          </Form>
+        );
+      }}
     </Formik>
   );
 }
