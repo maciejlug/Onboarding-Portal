@@ -8,29 +8,51 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Formik, Form } from "formik";
 import type { AccountFormData, AccountStepProps } from "../../types/onboarding";
 import { accountStepSchema } from "../validation/accountStepSchema";
+import { startOnboarding } from "../../services/onboardingApi";
+import { Formik, Form, type FormikHelpers } from "formik";
 
 export default function AccountStep({
   formData,
   setFormData,
   onNext,
 }: AccountStepProps) {
+  async function handleSubmit(
+    values: AccountFormData,
+    { setSubmitting, setStatus }: FormikHelpers<AccountFormData>,
+  ) {
+    try {
+      await startOnboarding({
+        email: values.email,
+        password: values.password,
+        confirmPassword: values.confirmPassword,
+        acceptTerms: values.acceptTerms,
+        acceptPrivacyPolicy: values.acceptPrivacyPolicy,
+      });
+
+      setFormData((prev) => ({
+        ...prev,
+        account: values,
+      }));
+
+      onNext();
+    } catch (error) {
+      setStatus(
+        error instanceof Error ? error.message : "Could not start onboarding.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
     <Formik<AccountFormData>
       initialValues={formData}
       enableReinitialize
       validateOnMount
       validationSchema={accountStepSchema}
-      onSubmit={(values, { setSubmitting }) => {
-        setFormData((prev) => ({
-          ...prev,
-          account: values,
-        }));
-        onNext();
-        setSubmitting(false);
-      }}
+      onSubmit={handleSubmit}
     >
       {({
         values,

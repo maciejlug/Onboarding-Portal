@@ -2,17 +2,22 @@ import type { SetStateAction, Dispatch } from "react";
 import type { OnboardingStep } from "../onboarding/steps";
 
 //API types
-export type OnboardingSession = {
-  id: number;
-  status: string;
-  account_type: string;
-  created_at: string;
-  updated_at: string;
+export type StartOnboardingPayload = {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  acceptTerms: boolean;
+  acceptPrivacyPolicy: boolean;
 };
 
-export type CreateOnboardingSessionPayload = {
+export type StartOnboardingResponse = {
+  message: string;
+  user_id: number;
+  onboarding_id: number;
+  current_step: number;
   status: string;
-  account_type: string;
+  is_email_verified: boolean;
+  email: string;
 };
 
 // Step data types

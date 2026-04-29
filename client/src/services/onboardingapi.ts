@@ -1,30 +1,41 @@
-import type { OnboardingSession, CreateOnboardingSessionPayload } from "../types/onboarding";
 import { API_BASE_URL } from "../config/api";
+import type {
+  StartOnboardingPayload,
+  StartOnboardingResponse,
+} from "../types/onboarding";
 
-export async function getOnboardingSessions(): Promise<OnboardingSession[]> {
-  const response = await fetch(`${API_BASE_URL}/api/onboarding/`);
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch onboarding sessions");
-  }
-
-  return response.json();
-}
-
-export async function createOnboardingSession(
-  payload: CreateOnboardingSessionPayload
-): Promise<OnboardingSession> {
-  const response = await fetch(`${API_BASE_URL}/api/onboarding/`, {
+export async function startOnboarding(
+  payload: StartOnboardingPayload,
+): Promise<StartOnboardingResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/onboarding/start/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      email: payload.email,
+      password: payload.password,
+      confirm_password: payload.confirmPassword,
+      accept_terms: payload.acceptTerms,
+      accept_privacy_policy: payload.acceptPrivacyPolicy,
+    }),
   });
 
+  const data = await response.json().catch(() => null);
+
   if (!response.ok) {
-    throw new Error("Failed to create onboarding session");
+    if (data) {
+      const firstError = Object.values(data)[0];
+      if (Array.isArray(firstError) && firstError.length > 0) {
+        throw new Error(String(firstError[0]));
+      }
+      if (typeof firstError === "string") {
+        throw new Error(firstError);
+      }
+    }
+
+    throw new Error("Could not start onboarding.");
   }
 
-  return response.json();
+  return data as StartOnboardingResponse;
 }

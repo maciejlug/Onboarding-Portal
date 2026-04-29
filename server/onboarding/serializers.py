@@ -43,6 +43,7 @@ class OnboardingStartSerializer(serializers.Serializer):
         password = validated_data["password"]
 
         user = User.objects.create_user(
+            username=email,
             email=email,
             password=password,
         )
