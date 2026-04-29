@@ -15,6 +15,7 @@ import { Form, Formik } from "formik";
 import type { ProfileFormData, ProfileStepProps } from "../../types/onboarding";
 import { profileStepSchema } from "../validation/profileStepSchema";
 import { countries } from "../data/countries";
+import { updateOnboardingMe } from "../../services/onboardingApi";
 
 export default function ProfileStep({
   formData,
@@ -27,13 +28,32 @@ export default function ProfileStep({
       initialValues={formData}
       enableReinitialize
       validationSchema={profileStepSchema}
-      onSubmit={(values, { setSubmitting }) => {
-        setFormData((prev) => ({
-          ...prev,
-          profile: values,
-        }));
-        onNext();
-        setSubmitting(false);
+      onSubmit={async (values, { setSubmitting, setStatus }) => {
+        try {
+          await updateOnboardingMe({
+            first_name: values.firstName,
+            last_name: values.lastName,
+            gender: values.gender,
+            country_of_birth: values.countryOfBirth,
+            date_of_birth: values.dateOfBirth,
+            current_step: 3,
+          });
+
+          setFormData((prev) => ({
+            ...prev,
+            profile: values,
+          }));
+
+          onNext();
+        } catch (error) {
+          setStatus(
+            error instanceof Error
+              ? error.message
+              : "Could not update profile details.",
+          );
+        } finally {
+          setSubmitting(false);
+        }
       }}
     >
       {({

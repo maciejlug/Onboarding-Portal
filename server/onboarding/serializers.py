@@ -58,3 +58,64 @@ class OnboardingStartSerializer(serializers.Serializer):
         )
 
         return onboarding
+
+
+class OnboardingSessionSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(source="user.email", read_only=True)
+
+    class Meta:
+        model = OnboardingSession
+        fields = [
+            "id",
+            "email",
+            "status",
+            "current_step",
+            "is_email_verified",
+            "accept_terms",
+            "accept_privacy_policy",
+            "first_name",
+            "last_name",
+            "gender",
+            "country_of_birth",
+            "date_of_birth",
+            "phone",
+            "street",
+            "city",
+            "postal_code",
+            "country",
+            "created_at",
+            "updated_at",
+        ]
+
+
+class OnboardingUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OnboardingSession
+        fields = [
+            "first_name",
+            "last_name",
+            "gender",
+            "country_of_birth",
+            "date_of_birth",
+            "phone",
+            "street",
+            "city",
+            "postal_code",
+            "country",
+            "current_step",
+            "status",
+        ]
+        extra_kwargs = {
+            "first_name": {"required": False},
+            "last_name": {"required": False},
+            "gender": {"required": False},
+            "country_of_birth": {"required": False},
+            "date_of_birth": {"required": False},
+            "phone": {"required": False},
+            "street": {"required": False},
+            "city": {"required": False},
+            "postal_code": {"required": False},
+            "country": {"required": False},
+            "current_step": {"required": False},
+            "status": {"required": False},
+        }

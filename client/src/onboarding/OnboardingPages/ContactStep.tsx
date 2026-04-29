@@ -10,6 +10,7 @@ import { Form, Formik } from "formik";
 import type { ContactFormData, ContactStepProps } from "../../types/onboarding";
 import { countries } from "../data/countries";
 import { contactStepSchema } from "../validation/contactStepSchema";
+import { updateOnboardingMe } from "../../services/onboardingApi";
 
 export default function ContactStep({
   formData,
@@ -23,13 +24,32 @@ export default function ContactStep({
       initialValues={formData}
       enableReinitialize
       validationSchema={contactStepSchema}
-      onSubmit={(values, { setSubmitting }) => {
-        setFormData((prev) => ({
-          ...prev,
-          contact: values,
-        }));
-        onNext();
-        setSubmitting(false);
+      onSubmit={async (values, { setSubmitting, setStatus }) => {
+        try {
+          await updateOnboardingMe({
+            phone: values.phone,
+            street: values.street,
+            city: values.city,
+            postal_code: values.postalCode,
+            country: values.country,
+            current_step: 4,
+          });
+
+          setFormData((prev) => ({
+            ...prev,
+            contact: values,
+          }));
+
+          onNext();
+        } catch (error) {
+          setStatus(
+            error instanceof Error
+              ? error.message
+              : "Could not update contact details.",
+          );
+        } finally {
+          setSubmitting(false);
+        }
       }}
     >
       {({
