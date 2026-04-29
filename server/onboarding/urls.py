@@ -1,8 +1,7 @@
 from django.urls import path
 
-from .views import OnboardingDetailView, OnboardingView
+from .views import OnboardingStartView
 
 urlpatterns = [
-    path("", OnboardingView.as_view(), name="onboarding-list-create"),
-    path("<int:pk>/", OnboardingDetailView.as_view(), name="onboarding-detail"),
+    path("start/", OnboardingStartView.as_view(), name="onboarding-start"),
 ]
