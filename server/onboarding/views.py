@@ -1,6 +1,7 @@
-from django.contrib.auth import login
+from django.contrib.auth import get_user_model, login
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 from rest_framework import status
@@ -10,16 +11,18 @@ from rest_framework.views import APIView
 
 from .models import OnboardingSession
 from .serializers import (
+    EmailAvailabilitySerializer,
     OnboardingSessionSerializer,
     OnboardingStartSerializer,
     OnboardingUpdateSerializer,
 )
 
+User = get_user_model()
 
+@method_decorator(ensure_csrf_cookie, name="dispatch")
 class CsrfCookieView(APIView):
     permission_classes = [AllowAny]
 
-    @ensure_csrf_cookie
     def get(self, request):
         get_token(request)
         return Response({"message": "CSRF cookie set."})
@@ -58,9 +61,7 @@ class OnboardingMeView(APIView):
 
     def get(self, request):
         onboarding = self.get_object(request)
-        serializer = OnboardingSessionSerializer(onboarding)
-        get_token(request)
-        return Response(serializer.data)
+        return Response(OnboardingSessionSerializer(onboarding).data)
 
     def patch(self, request):
         onboarding = self.get_object(request)
@@ -71,5 +72,30 @@ class OnboardingMeView(APIView):
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        get_token(request)
+
+        if "first_name" in serializer.validated_data:
+            onboarding.user.first_name = serializer.validated_data["first_name"]
+
+        if "last_name" in serializer.validated_data:
+            onboarding.user.last_name = serializer.validated_data["last_name"]
+
+        onboarding.user.save()
+
         return Response(OnboardingSessionSerializer(onboarding).data)
+    
+class EmailAvailabilityView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        serializer = EmailAvailabilitySerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data["email"]
+        is_taken = User.objects.filter(email__iexact=email).exists()
+
+        return Response(
+            {
+                "email": email,
+                "is_taken": is_taken,
+            }
+        )

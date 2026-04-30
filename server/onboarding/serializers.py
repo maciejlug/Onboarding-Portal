@@ -119,3 +119,6 @@ class OnboardingUpdateSerializer(serializers.ModelSerializer):
             "current_step": {"required": False},
             "status": {"required": False},
         }
+
+class EmailAvailabilitySerializer(serializers.Serializer):
+    email = serializers.EmailField()

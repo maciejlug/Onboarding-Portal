@@ -1,7 +1,7 @@
 .step-container {
-  width: min(100%, 680px);
+  width: min(100%, 560px);
   min-height: 720px;
-  margin: 48px auto 0;
+  margin: 56px auto 0;
   background: #f7f7f5;
   border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 4px;
