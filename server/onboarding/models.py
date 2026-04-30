@@ -34,3 +34,4 @@ class OnboardingSession(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    email_verification_token = models.CharField(max_length=255, blank=True)

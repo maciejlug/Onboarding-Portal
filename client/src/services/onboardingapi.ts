@@ -109,3 +109,66 @@ export async function checkEmailAvailability(email: string) {
 
   return data as { email: string; is_taken: boolean };
 }
+
+export async function finishOnboarding() {
+  const response = await fetch(`${API_BASE_URL}/api/onboarding/finish/`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCookie("csrftoken"),
+    },
+  });
+
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(data?.detail || "Could not finish onboarding.");
+  }
+
+  return data as {
+    message: string;
+    status: string;
+    is_email_verified: boolean;
+  };
+}
+
+export async function verifyEmail(token: string) {
+  const response = await fetch(
+    `${API_BASE_URL}/api/onboarding/verify-email/?token=${encodeURIComponent(token)}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(data?.detail || "Could not verify email.");
+  }
+
+  return data as { message: string; is_email_verified: boolean };
+}
+
+export async function resendVerificationEmail() {
+  const response = await fetch(
+    `${API_BASE_URL}/api/onboarding/resend-verification-email/`,
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+    },
+  );
+
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(data?.detail || "Could not resend verification email.");
+  }
+
+  return data as { message: string };
+}

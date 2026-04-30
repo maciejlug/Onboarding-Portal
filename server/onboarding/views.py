@@ -1,3 +1,6 @@
+import secrets
+from django.conf import settings
+from django.core.mail import send_mail
 from django.contrib.auth import get_user_model, login
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
@@ -8,6 +11,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 from .models import OnboardingSession
 from .serializers import (
@@ -35,6 +39,25 @@ class OnboardingStartView(APIView):
         serializer = OnboardingStartSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         onboarding = serializer.save()
+
+        verification_token = secrets.token_urlsafe(32)
+        onboarding.email_verification_token = verification_token
+        onboarding.save(update_fields=["email_verification_token", "updated_at"])
+
+        verification_url = (
+            f"{settings.FRONTEND_BASE_URL}/onboarding/complete?token={verification_token}"
+        )
+
+        send_mail(
+            subject="Verify your account",
+            message=(
+                "Thank you for registering.\n\n"
+                f"Verify your email by opening this link:\n{verification_url}"
+            ),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[request.user.email],
+            fail_silently=False,
+        )
 
         login(request, onboarding.user)
         get_token(request)
@@ -98,4 +121,80 @@ class EmailAvailabilityView(APIView):
                 "email": email,
                 "is_taken": is_taken,
             }
+        )
+
+class OnboardingFinishView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        onboarding = get_object_or_404(OnboardingSession, user=request.user)
+        onboarding.status = "completed"
+        onboarding.current_step = 4
+        onboarding.save(update_fields=["status", "current_step", "updated_at"])
+
+        return Response(
+            {
+                "message": "Onboarding completed.",
+                "status": onboarding.status,
+                "is_email_verified": onboarding.is_email_verified,
+            },
+            status=status.HTTP_200_OK,
+        )
+    
+class VerifyEmailView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        token = request.query_params.get("token", "").strip()
+
+        onboarding = get_object_or_404(
+            OnboardingSession,
+            email_verification_token=token,
+        )
+
+        onboarding.is_email_verified = True
+        onboarding.email_verification_token = ""
+        onboarding.save(update_fields=["is_email_verified", "email_verification_token", "updated_at"])
+
+        return Response(
+            {
+                "message": "Email verified successfully.",
+                "is_email_verified": True,
+            }
+        )
+    
+class ResendVerificationEmailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        onboarding = get_object_or_404(OnboardingSession, user=request.user)
+
+        if onboarding.is_email_verified:
+            return Response(
+                {"message": "Email is already verified."},
+                status=200,
+            )
+
+        verification_token = secrets.token_urlsafe(32)
+        onboarding.email_verification_token = verification_token
+        onboarding.save(update_fields=["email_verification_token", "updated_at"])
+
+        verification_url = (
+            f"{settings.FRONTEND_BASE_URL}/onboarding/complete?token={verification_token}"
+        )
+
+        send_mail(
+            subject="Verify your account",
+            message=(
+                "Thank you for registering.\n\n"
+                f"Verify your email by opening this link:\n{verification_url}"
+            ),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[request.user.email],
+            fail_silently=False,
+        )
+
+        return Response(
+            {"message": "Verification email has been sent again."},
+            status=200,
         )

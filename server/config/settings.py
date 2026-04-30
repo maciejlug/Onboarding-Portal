@@ -151,3 +151,12 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+FRONTEND_BASE_URL = "http://localhost:5173"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "regformproject@gmail.com"
+EMAIL_HOST_PASSWORD = "hdkk dsbe laks bfwh"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+FRONTEND_BASE_URL = "http://localhost:5173"
+

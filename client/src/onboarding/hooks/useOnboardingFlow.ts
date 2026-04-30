@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { ONBOARDING_STEPS, type OnboardingStep } from "../steps";
 import type { OnboardingFormData } from "../../types/onboarding";
+import { finishOnboarding } from "../../services/onboardingApi";
+import { useNavigate } from "react-router-dom";
 
 export function useOnboardingFlow() {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<OnboardingStep>(
     ONBOARDING_STEPS.ACCOUNT,
   );
@@ -14,9 +17,9 @@ export function useOnboardingFlow() {
     setCurrentStep(step);
   }
 
-  function handleFinish() {
-    console.log("Finish onboarding", formData);
-    //todo: submit data to backend and handle response
+  async function handleFinish() {
+    await finishOnboarding();
+    navigate("/onboarding/complete");
   }
 
   const [formData, setFormData] = useState<OnboardingFormData>({
