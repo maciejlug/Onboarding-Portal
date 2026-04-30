@@ -89,3 +89,23 @@ export async function updateOnboardingMe(payload: Record<string, unknown>) {
 
   return data;
 }
+
+export async function checkEmailAvailability(email: string) {
+  const params = new URLSearchParams({ email });
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/onboarding/check-email/?${params.toString()}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error("Could not validate email.");
+  }
+
+  return data as { email: string; is_taken: boolean };
+}

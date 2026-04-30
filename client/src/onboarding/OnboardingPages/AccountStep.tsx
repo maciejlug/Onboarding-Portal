@@ -10,7 +10,10 @@ import {
 } from "@mui/material";
 import type { AccountFormData, AccountStepProps } from "../../types/onboarding";
 import { accountStepSchema } from "../validation/accountStepSchema";
-import { startOnboarding } from "../../services/onboardingApi";
+import {
+  checkEmailAvailability,
+  startOnboarding,
+} from "../../services/onboardingApi";
 import { Formik, Form, type FormikHelpers } from "formik";
 
 export default function AccountStep({
@@ -46,6 +49,36 @@ export default function AccountStep({
     }
   }
 
+  async function handleEmailBlur(
+    email: string,
+    setFieldError: (field: string, message: string | undefined) => void,
+  ) {
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail) {
+      return;
+    }
+
+    const looksLikeEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail);
+
+    if (!looksLikeEmail) {
+      return;
+    }
+
+    try {
+      const result = await checkEmailAvailability(trimmedEmail);
+
+      if (result.is_taken) {
+        setFieldError("email", "An account with this email already exists.");
+        return;
+      }
+
+      setFieldError("email", undefined);
+    } catch (error) {
+      console.error("Email availability check failed:", error);
+    }
+  }
+
   return (
     <Formik<AccountFormData>
       initialValues={formData}
@@ -63,6 +96,7 @@ export default function AccountStep({
         isValid,
         isSubmitting,
         setFieldValue,
+        setFieldError,
       }) => {
         const isButtonDisabled =
           !values.email.trim() ||
@@ -94,7 +128,10 @@ export default function AccountStep({
                   type="email"
                   value={values.email}
                   onChange={handleChange}
-                  onBlur={handleBlur}
+                  onBlur={async (event) => {
+                    handleBlur(event);
+                    await handleEmailBlur(event.target.value, setFieldError);
+                  }}
                   error={Boolean(touched.email && errors.email)}
                   helperText={touched.email ? errors.email : ""}
                   fullWidth
