@@ -1,7 +1,12 @@
 import { Link } from "react-router-dom";
 import "./Navbar.css";
+import { useAuth } from "../../context/authContext";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 
 export default function Navbar() {
+  const { user } = useAuth();
+
   return (
     <header className="navbar-wrapper">
       <div className="page-width">
@@ -15,10 +20,14 @@ export default function Navbar() {
             </nav>
           </div>
           <nav className="navbar__auth">
-            <Link to="/login">Login</Link>
-            <Link to="/onboarding" className="button-link">
-              Register
-            </Link>
+            {user.isAuthenticated ? (
+              <Typography color="white">{user.email}</Typography>
+            ) : (
+              <>
+                <Button color="inherit">Login</Button>
+                <Button variant="contained">Register</Button>
+              </>
+            )}
           </nav>
         </div>
       </div>

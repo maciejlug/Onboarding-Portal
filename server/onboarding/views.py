@@ -40,6 +40,9 @@ class OnboardingStartView(APIView):
         serializer.is_valid(raise_exception=True)
         onboarding = serializer.save()
 
+        login(request, onboarding.user)
+        get_token(request)
+
         verification_token = secrets.token_urlsafe(32)
         onboarding.email_verification_token = verification_token
         onboarding.save(update_fields=["email_verification_token", "updated_at"])
@@ -55,18 +58,13 @@ class OnboardingStartView(APIView):
                 f"Verify your email by opening this link:\n{verification_url}"
             ),
             from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[request.user.email],
+            recipient_list=[onboarding.user.email],
             fail_silently=False,
         )
-
-        login(request, onboarding.user)
-        get_token(request)
 
         return Response(
             {
                 "message": "Onboarding started successfully.",
-                "user_id": onboarding.user.id,
-                "onboarding_id": onboarding.id,
                 "current_step": onboarding.current_step,
                 "status": onboarding.status,
                 "is_email_verified": onboarding.is_email_verified,
@@ -74,7 +72,6 @@ class OnboardingStartView(APIView):
             },
             status=status.HTTP_201_CREATED,
         )
-
 
 class OnboardingMeView(APIView):
     permission_classes = [IsAuthenticated]
