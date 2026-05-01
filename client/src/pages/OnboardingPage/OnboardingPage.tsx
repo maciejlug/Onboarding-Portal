@@ -29,6 +29,24 @@ export default function OnboardingPage() {
     goToStep,
   } = useOnboardingFlow();
 
+  type GenderValue = "" | "male" | "female" | "prefer_not_to_say";
+
+  function normalizeGender(value?: string): GenderValue {
+    if (value === "male") {
+      return "male";
+    }
+
+    if (value === "female") {
+      return "female";
+    }
+
+    if (value === "prefer_not_to_say") {
+      return "prefer_not_to_say";
+    }
+
+    return "";
+  }
+
   useEffect(() => {
     async function loadOnboardingProgress() {
       if (!user.isAuthenticated) {
@@ -38,6 +56,30 @@ export default function OnboardingPage() {
 
       try {
         const onboarding = await getOnboardingMe();
+
+        setFormData({
+          account: {
+            email: onboarding.email ?? "",
+            password: "",
+            confirmPassword: "",
+            acceptTerms: onboarding.accept_terms ?? false,
+            acceptPrivacyPolicy: onboarding.accept_privacy_policy ?? false,
+          },
+          profile: {
+            firstName: onboarding.first_name ?? "",
+            lastName: onboarding.last_name ?? "",
+            gender: normalizeGender(onboarding.gender),
+            countryOfBirth: onboarding.country_of_birth ?? "",
+            dateOfBirth: onboarding.date_of_birth ?? "",
+          },
+          contact: {
+            phone: onboarding.phone ?? "",
+            street: onboarding.street ?? "",
+            city: onboarding.city ?? "",
+            postalCode: onboarding.postal_code ?? "",
+            country: onboarding.country ?? "",
+          },
+        });
 
         if (onboarding.status === "completed") {
           navigate("/onboarding/complete", { replace: true });
@@ -62,7 +104,7 @@ export default function OnboardingPage() {
     }
 
     loadOnboardingProgress();
-  }, [user.isAuthenticated, navigate, goToStep]);
+  }, [user.isAuthenticated, navigate, goToStep, setFormData]);
 
   const stepMap: Record<OnboardingStep, ReactNode> = {
     [ONBOARDING_STEPS.ACCOUNT]: (

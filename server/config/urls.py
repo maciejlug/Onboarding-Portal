@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import include, path
 
-from .views import CurrentUserView, HealthCheckView, LogoutView
+from .views import CurrentUserView, HealthCheckView, LoginView, LogoutView
 
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -23,4 +23,5 @@ urlpatterns = [
     path("api/onboarding/", include("onboarding.urls")),
     path("api/auth/me/", CurrentUserView.as_view(), name="auth-me"),
     path("api/auth/logout/", LogoutView.as_view(), name="auth-logout"),
+    path("api/auth/login/", LoginView.as_view(), name="auth-login"),
 ]

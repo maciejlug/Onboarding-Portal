@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { ONBOARDING_STEPS, type OnboardingStep } from "../steps";
 import type { OnboardingFormData } from "../../types/onboarding";
 import { finishOnboarding } from "../../services/onboardingApi";
@@ -90,10 +90,10 @@ export function useOnboardingFlow() {
     }
   }
 
-  function goToStep(step: OnboardingStep) {
+  const goToStep = useCallback((step: OnboardingStep) => {
     setCurrentStep(step);
     setIsEditingFromSummary(false);
-  }
+  }, []);
 
   return {
     currentStep,

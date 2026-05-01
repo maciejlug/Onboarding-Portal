@@ -3,6 +3,7 @@ import HomePage from "./pages/HomePage/HomePage";
 import OnboardingPage from "./pages/OnboardingPage/OnboardingPage";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 import OnboardingCompleteStep from "./onboarding/OnboardingPages/OnboardingCompleteStep";
+import LoginPage from "./pages/LoginPage/LoginPage";
 
 export default function AppRoutes() {
   return (
@@ -14,6 +15,7 @@ export default function AppRoutes() {
           path="/onboarding/complete"
           element={<OnboardingCompleteStep />}
         />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>

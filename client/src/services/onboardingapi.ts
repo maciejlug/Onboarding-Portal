@@ -33,7 +33,7 @@ export type OnboardingMeResponse = {
   postal_code?: string;
   country?: string;
 };
-function getJsonCsrfHeaders(): Headers {
+export function getJsonCsrfHeaders(): Headers {
   const headers = new Headers();
 
   headers.set("Content-Type", "application/json");

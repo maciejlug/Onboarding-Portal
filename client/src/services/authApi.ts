@@ -1,9 +1,15 @@
 import { API_BASE_URL } from "../config/api";
-import { getCookie } from "./csrf";
+import { ensureCsrfCookie, getCookie } from "./csrf";
+import { getJsonCsrfHeaders } from "./onboardingApi";
 
 export type CurrentUserResponse = {
   is_authenticated: boolean;
   email: string;
+};
+
+export type LoginPayload = {
+  email: string;
+  password: string;
 };
 
 export async function getCurrentUser(): Promise<CurrentUserResponse> {
@@ -36,4 +42,29 @@ export async function logoutUser() {
   }
 
   return data as { message: string };
+}
+
+export async function loginUser(payload: LoginPayload) {
+  await ensureCsrfCookie();
+
+  const response = await fetch(`${API_BASE_URL}/api/auth/login/`, {
+    method: "POST",
+    credentials: "include",
+    headers: getJsonCsrfHeaders(),
+    body: JSON.stringify({
+      email: payload.email,
+      password: payload.password,
+    }),
+  });
+
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(data?.detail || "Could not log in.");
+  }
+
+  return data as {
+    message: string;
+    email: string;
+  };
 }
