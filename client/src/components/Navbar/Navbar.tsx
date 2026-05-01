@@ -1,11 +1,44 @@
-import { Link } from "react-router-dom";
+import { useState, type MouseEvent } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Button, Menu, MenuItem } from "@mui/material";
 import "./Navbar.css";
 import { useAuth } from "../../context/authContext";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import { logoutUser } from "../../services/authApi";
 
 export default function Navbar() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
+  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const isMenuOpen = Boolean(anchorEl);
+
+  function handleOpenMenu(event: MouseEvent<HTMLButtonElement>) {
+    setAnchorEl(event.currentTarget);
+  }
+
+  function handleCloseMenu() {
+    setAnchorEl(null);
+  }
+
+  async function handleLogout() {
+    if (isLoggingOut) {
+      return;
+    }
+
+    setIsLoggingOut(true);
+
+    try {
+      await logoutUser();
+      await refreshUser();
+      navigate("/");
+      handleCloseMenu();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  }
 
   return (
     <header className="navbar-wrapper">
@@ -15,17 +48,51 @@ export default function Navbar() {
             <div className="navbar__brand">
               <Link to="/">Onboarding Portal</Link>
             </div>
+
             <nav className="navbar__nav">
               <Link to="/">Home</Link>
             </nav>
           </div>
+
           <nav className="navbar__auth">
             {user.isAuthenticated ? (
-              <Typography color="white">{user.email}</Typography>
+              <>
+                <Button
+                  type="button"
+                  onClick={handleOpenMenu}
+                  disabled={isLoggingOut}
+                  sx={{
+                    textTransform: "none",
+                    color: "white",
+                  }}
+                >
+                  {user.email}
+                </Button>
+
+                <Menu
+                  anchorEl={anchorEl}
+                  open={isMenuOpen}
+                  onClose={handleCloseMenu}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                >
+                  <MenuItem onClick={handleLogout} disabled={isLoggingOut}>
+                    Logout
+                  </MenuItem>
+                </Menu>
+              </>
             ) : (
               <>
-                <Button color="inherit">Login</Button>
-                <Button variant="contained">Register</Button>
+                <Link to="/login">Login</Link>
+                <Link to="/onboarding" className="button-link">
+                  Register
+                </Link>
               </>
             )}
           </nav>

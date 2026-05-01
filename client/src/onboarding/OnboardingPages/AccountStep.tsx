@@ -15,12 +15,14 @@ import {
   startOnboarding,
 } from "../../services/onboardingApi";
 import { Formik, Form, type FormikHelpers } from "formik";
+import { useAuth } from "../../context/authContext";
 
 export default function AccountStep({
   formData,
   setFormData,
   onNext,
 }: AccountStepProps) {
+  const { refreshUser } = useAuth();
   async function handleSubmit(
     values: AccountFormData,
     { setSubmitting, setStatus }: FormikHelpers<AccountFormData>,
@@ -38,7 +40,7 @@ export default function AccountStep({
         ...prev,
         account: values,
       }));
-
+      await refreshUser();
       onNext();
     } catch (error) {
       setStatus(

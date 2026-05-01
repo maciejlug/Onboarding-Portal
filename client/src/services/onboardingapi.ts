@@ -9,16 +9,77 @@ export type StartOnboardingPayload = {
   acceptPrivacyPolicy: boolean;
 };
 
+export type OnboardingStatus = "in_progress" | "completed";
+
+export type OnboardingMeResponse = {
+  status: OnboardingStatus;
+  current_step: number;
+  is_email_verified: boolean;
+
+  email?: string;
+
+  accept_terms?: boolean;
+  accept_privacy_policy?: boolean;
+
+  first_name?: string;
+  last_name?: string;
+  gender?: string;
+  country_of_birth?: string;
+  date_of_birth?: string;
+
+  phone?: string;
+  street?: string;
+  city?: string;
+  postal_code?: string;
+  country?: string;
+};
+function getJsonCsrfHeaders(): Headers {
+  const headers = new Headers();
+
+  headers.set("Content-Type", "application/json");
+
+  const csrfToken = getCookie("csrftoken");
+
+  if (csrfToken) {
+    headers.set("X-CSRFToken", csrfToken);
+  }
+  console.log({ headers });
+  return headers;
+}
+
+function getFirstApiError(data: unknown, fallbackMessage: string) {
+  if (!data || typeof data !== "object") {
+    return fallbackMessage;
+  }
+
+  const values = Object.values(data as Record<string, unknown>);
+  const firstError = values[0];
+
+  if (Array.isArray(firstError) && firstError.length > 0) {
+    return String(firstError[0]);
+  }
+
+  if (typeof firstError === "string") {
+    return firstError;
+  }
+
+  if (
+    "detail" in data &&
+    typeof (data as { detail?: unknown }).detail === "string"
+  ) {
+    return (data as { detail: string }).detail;
+  }
+
+  return fallbackMessage;
+}
+
 export async function startOnboarding(payload: StartOnboardingPayload) {
   await ensureCsrfCookie();
 
   const response = await fetch(`${API_BASE_URL}/api/onboarding/start/`, {
     method: "POST",
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": getCookie("csrftoken"),
-    },
+    headers: getJsonCsrfHeaders(),
     body: JSON.stringify({
       email: payload.email,
       password: payload.password,
@@ -31,63 +92,44 @@ export async function startOnboarding(payload: StartOnboardingPayload) {
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
-    const firstError = data ? Object.values(data)[0] : null;
-
-    if (Array.isArray(firstError) && firstError.length > 0) {
-      throw new Error(String(firstError[0]));
-    }
-
-    if (typeof firstError === "string") {
-      throw new Error(firstError);
-    }
-
-    throw new Error("Could not start onboarding.");
+    throw new Error(getFirstApiError(data, "Could not start onboarding."));
   }
 
   return data;
 }
 
-export async function getOnboardingMe() {
+export async function getOnboardingMe(): Promise<OnboardingMeResponse> {
   const response = await fetch(`${API_BASE_URL}/api/onboarding/me/`, {
     method: "GET",
     credentials: "include",
   });
 
-  if (!response.ok) {
-    throw new Error("Could not fetch onboarding data.");
-  }
-
-  return response.json();
-}
-
-export async function updateOnboardingMe(payload: Record<string, unknown>) {
-  const response = await fetch(`${API_BASE_URL}/api/onboarding/me/`, {
-    method: "PATCH",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": getCookie("csrftoken"),
-    },
-    body: JSON.stringify(payload),
-  });
-
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
-    const firstError = data ? Object.values(data)[0] : null;
-
-    if (Array.isArray(firstError) && firstError.length > 0) {
-      throw new Error(String(firstError[0]));
-    }
-
-    if (typeof firstError === "string") {
-      throw new Error(firstError);
-    }
-
-    throw new Error("Could not update onboarding.");
+    throw new Error(getFirstApiError(data, "Could not fetch onboarding data."));
   }
 
-  return data;
+  return data as OnboardingMeResponse;
+}
+
+export async function updateOnboardingMe(payload: Record<string, unknown>) {
+  await ensureCsrfCookie();
+  console.log(getJsonCsrfHeaders(), "update");
+  const response = await fetch(`${API_BASE_URL}/api/onboarding/me/`, {
+    method: "PATCH",
+    credentials: "include",
+    headers: getJsonCsrfHeaders(),
+    body: JSON.stringify(payload),
+  });
+  console.log({ response });
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(getFirstApiError(data, "Could not update onboarding."));
+  }
+
+  return data as OnboardingMeResponse;
 }
 
 export async function checkEmailAvailability(email: string) {
@@ -104,38 +146,40 @@ export async function checkEmailAvailability(email: string) {
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
-    throw new Error("Could not validate email.");
+    throw new Error(getFirstApiError(data, "Could not validate email."));
   }
 
   return data as { email: string; is_taken: boolean };
 }
 
 export async function finishOnboarding() {
+  await ensureCsrfCookie();
+
   const response = await fetch(`${API_BASE_URL}/api/onboarding/finish/`, {
     method: "POST",
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": getCookie("csrftoken"),
-    },
+    headers: getJsonCsrfHeaders(),
   });
 
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
-    throw new Error(data?.detail || "Could not finish onboarding.");
+    throw new Error(getFirstApiError(data, "Could not finish onboarding."));
   }
 
   return data as {
-    message: string;
-    status: string;
+    message?: string;
+    detail?: string;
+    status: OnboardingStatus;
     is_email_verified: boolean;
   };
 }
 
 export async function verifyEmail(token: string) {
+  const params = new URLSearchParams({ token });
+
   const response = await fetch(
-    `${API_BASE_URL}/api/onboarding/verify-email/?token=${encodeURIComponent(token)}`,
+    `${API_BASE_URL}/api/onboarding/verify-email/?${params.toString()}`,
     {
       method: "GET",
       credentials: "include",
@@ -145,30 +189,38 @@ export async function verifyEmail(token: string) {
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
-    throw new Error(data?.detail || "Could not verify email.");
+    throw new Error(getFirstApiError(data, "Could not verify email."));
   }
 
-  return data as { message: string; is_email_verified: boolean };
+  return data as {
+    message?: string;
+    detail?: string;
+    is_email_verified: boolean;
+  };
 }
 
 export async function resendVerificationEmail() {
+  await ensureCsrfCookie();
+
   const response = await fetch(
     `${API_BASE_URL}/api/onboarding/resend-verification-email/`,
     {
       method: "POST",
       credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": getCookie("csrftoken"),
-      },
+      headers: getJsonCsrfHeaders(),
     },
   );
 
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
-    throw new Error(data?.detail || "Could not resend verification email.");
+    throw new Error(
+      getFirstApiError(data, "Could not resend verification email."),
+    );
   }
 
-  return data as { message: string };
+  return data as {
+    message?: string;
+    detail?: string;
+  };
 }

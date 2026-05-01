@@ -90,6 +90,11 @@ export function useOnboardingFlow() {
     }
   }
 
+  function goToStep(step: OnboardingStep) {
+    setCurrentStep(step);
+    setIsEditingFromSummary(false);
+  }
+
   return {
     currentStep,
     formData,
@@ -99,5 +104,6 @@ export function useOnboardingFlow() {
     handleBack,
     handleEditStep,
     handleFinish,
+    goToStep,
   };
 }
