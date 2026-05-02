@@ -43,7 +43,6 @@ export function getJsonCsrfHeaders(): Headers {
   if (csrfToken) {
     headers.set("X-CSRFToken", csrfToken);
   }
-  console.log({ headers });
   return headers;
 }
 
@@ -115,14 +114,12 @@ export async function getOnboardingMe(): Promise<OnboardingMeResponse> {
 
 export async function updateOnboardingMe(payload: Record<string, unknown>) {
   await ensureCsrfCookie();
-  console.log(getJsonCsrfHeaders(), "update");
   const response = await fetch(`${API_BASE_URL}/api/onboarding/me/`, {
     method: "PATCH",
     credentials: "include",
     headers: getJsonCsrfHeaders(),
     body: JSON.stringify(payload),
   });
-  console.log({ response });
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
