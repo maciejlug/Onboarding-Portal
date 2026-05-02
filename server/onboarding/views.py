@@ -6,6 +6,8 @@ from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.http import JsonResponse
+from django.middleware.csrf import get_token
 
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -28,8 +30,11 @@ class CsrfCookieView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        get_token(request)
-        return Response({"message": "CSRF cookie set."})
+        csrf_token = get_token(request)
+
+        return Response({
+            "csrfToken": csrf_token,
+        })
 
 
 class OnboardingStartView(APIView):

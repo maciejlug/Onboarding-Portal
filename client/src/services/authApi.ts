@@ -1,6 +1,5 @@
 import { API_BASE_URL } from "../config/api";
-import { ensureCsrfCookie, getCookie } from "./csrf";
-import { getJsonCsrfHeaders } from "./onboardingApi";
+import { getCsrfToken } from "./csrf";
 
 export type CurrentUserResponse = {
   is_authenticated: boolean;
@@ -25,32 +24,14 @@ export async function getCurrentUser(): Promise<CurrentUserResponse> {
   return response.json();
 }
 
-export async function logoutUser() {
-  const response = await fetch(`${API_BASE_URL}/api/auth/logout/`, {
+export async function loginUser(payload: LoginPayload) {
+  const response = await fetch(`${API_BASE_URL}/api/auth/login/`, {
     method: "POST",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      "X-CSRFToken": getCookie("csrftoken"),
+      "X-CSRFToken": await getCsrfToken(),
     },
-  });
-
-  const data = await response.json().catch(() => null);
-
-  if (!response.ok) {
-    throw new Error(data?.detail || "Could not log out.");
-  }
-
-  return data as { message: string };
-}
-
-export async function loginUser(payload: LoginPayload) {
-  await ensureCsrfCookie();
-
-  const response = await fetch(`${API_BASE_URL}/api/auth/login/`, {
-    method: "POST",
-    credentials: "include",
-    headers: getJsonCsrfHeaders(),
     body: JSON.stringify({
       email: payload.email,
       password: payload.password,
@@ -64,7 +45,30 @@ export async function loginUser(payload: LoginPayload) {
   }
 
   return data as {
-    message: string;
+    message?: string;
+    detail?: string;
     email: string;
+  };
+}
+
+export async function logoutUser() {
+  const response = await fetch(`${API_BASE_URL}/api/auth/logout/`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": await getCsrfToken(),
+    },
+  });
+
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(data?.detail || "Could not log out.");
+  }
+
+  return data as {
+    message?: string;
+    detail?: string;
   };
 }

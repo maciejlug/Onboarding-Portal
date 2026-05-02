@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "../config/api";
-import { ensureCsrfCookie, getCookie } from "./csrf";
+import { getCsrfToken } from "./csrf";
 
 export type StartOnboardingPayload = {
   email: string;
@@ -33,22 +33,31 @@ export type OnboardingMeResponse = {
   postal_code?: string;
   country?: string;
 };
-export function getJsonCsrfHeaders(): Headers {
-  const headers = new Headers();
 
-  headers.set("Content-Type", "application/json");
+async function getJsonCsrfHeaders(): Promise<Record<string, string>> {
+  const csrfToken = await getCsrfToken();
 
-  const csrfToken = getCookie("csrftoken");
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
 
   if (csrfToken) {
-    headers.set("X-CSRFToken", csrfToken);
+    headers["X-CSRFToken"] = csrfToken;
   }
+
   return headers;
 }
 
 function getFirstApiError(data: unknown, fallbackMessage: string) {
   if (!data || typeof data !== "object") {
     return fallbackMessage;
+  }
+
+  if (
+    "detail" in data &&
+    typeof (data as { detail?: unknown }).detail === "string"
+  ) {
+    return (data as { detail: string }).detail;
   }
 
   const values = Object.values(data as Record<string, unknown>);
@@ -62,23 +71,14 @@ function getFirstApiError(data: unknown, fallbackMessage: string) {
     return firstError;
   }
 
-  if (
-    "detail" in data &&
-    typeof (data as { detail?: unknown }).detail === "string"
-  ) {
-    return (data as { detail: string }).detail;
-  }
-
   return fallbackMessage;
 }
 
 export async function startOnboarding(payload: StartOnboardingPayload) {
-  await ensureCsrfCookie();
-
   const response = await fetch(`${API_BASE_URL}/api/onboarding/start/`, {
     method: "POST",
     credentials: "include",
-    headers: getJsonCsrfHeaders(),
+    headers: await getJsonCsrfHeaders(),
     body: JSON.stringify({
       email: payload.email,
       password: payload.password,
@@ -113,13 +113,13 @@ export async function getOnboardingMe(): Promise<OnboardingMeResponse> {
 }
 
 export async function updateOnboardingMe(payload: Record<string, unknown>) {
-  await ensureCsrfCookie();
   const response = await fetch(`${API_BASE_URL}/api/onboarding/me/`, {
     method: "PATCH",
     credentials: "include",
-    headers: getJsonCsrfHeaders(),
+    headers: await getJsonCsrfHeaders(),
     body: JSON.stringify(payload),
   });
+
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
@@ -150,12 +150,10 @@ export async function checkEmailAvailability(email: string) {
 }
 
 export async function finishOnboarding() {
-  await ensureCsrfCookie();
-
   const response = await fetch(`${API_BASE_URL}/api/onboarding/finish/`, {
     method: "POST",
     credentials: "include",
-    headers: getJsonCsrfHeaders(),
+    headers: await getJsonCsrfHeaders(),
   });
 
   const data = await response.json().catch(() => null);
@@ -197,14 +195,12 @@ export async function verifyEmail(token: string) {
 }
 
 export async function resendVerificationEmail() {
-  await ensureCsrfCookie();
-
   const response = await fetch(
     `${API_BASE_URL}/api/onboarding/resend-verification-email/`,
     {
       method: "POST",
       credentials: "include",
-      headers: getJsonCsrfHeaders(),
+      headers: await getJsonCsrfHeaders(),
     },
   );
 
