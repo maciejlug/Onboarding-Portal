@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "../config/api";
-import { getCsrfToken } from "./csrf";
+import { getJsonCsrfHeaders } from "./csrf";
 
 export type CurrentUserResponse = {
   is_authenticated: boolean;
@@ -28,10 +28,7 @@ export async function loginUser(payload: LoginPayload) {
   const response = await fetch(`${API_BASE_URL}/api/auth/login/`, {
     method: "POST",
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": await getCsrfToken(),
-    },
+    headers: await getJsonCsrfHeaders(),
     body: JSON.stringify({
       email: payload.email,
       password: payload.password,
@@ -55,10 +52,7 @@ export async function logoutUser() {
   const response = await fetch(`${API_BASE_URL}/api/auth/logout/`, {
     method: "POST",
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": await getCsrfToken(),
-    },
+    headers: await getJsonCsrfHeaders(),
   });
 
   const data = await response.json().catch(() => null);
