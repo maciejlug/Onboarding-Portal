@@ -35,11 +35,20 @@ export default function OnboardingCompleteStep() {
       try {
         if (token) {
           const verifyResponse = await verifyEmail(token);
-          setMessage(verifyResponse.message);
+
+          setMessage(
+            verifyResponse.message ??
+              verifyResponse.detail ??
+              "Email verified successfully.",
+          );
         }
 
         const response = await getOnboardingMe();
-        setData(response);
+
+        setData({
+          ...response,
+          email: response.email ?? "",
+        });
       } catch (err) {
         setError(
           err instanceof Error
@@ -59,7 +68,9 @@ export default function OnboardingCompleteStep() {
       setIsResending(true);
       setError("");
       const response = await resendVerificationEmail();
-      setMessage(response.message);
+      setMessage(
+        response.message ?? response.detail ?? "Verification email sent.",
+      );
     } catch (err) {
       setError(
         err instanceof Error
