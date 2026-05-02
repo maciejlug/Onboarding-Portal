@@ -1,7 +1,5 @@
 import { API_BASE_URL } from "../config/api";
 
-let csrfToken = "";
-
 export function getCookie(name: string) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -21,15 +19,19 @@ export async function ensureCsrfCookie(): Promise<string> {
 
   const data = await response.json().catch(() => null);
 
-  csrfToken = data?.csrfToken ?? getCookie("csrftoken");
-
-  return csrfToken;
+  return data?.csrfToken ?? getCookie("csrftoken");
 }
 
-export async function getCsrfToken(): Promise<string> {
+export async function getJsonCsrfHeaders(): Promise<Record<string, string>> {
+  const csrfToken = await ensureCsrfCookie();
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
   if (csrfToken) {
-    return csrfToken;
+    headers["X-CSRFToken"] = csrfToken;
   }
 
-  return ensureCsrfCookie();
+  return headers;
 }

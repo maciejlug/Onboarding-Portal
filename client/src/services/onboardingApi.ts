@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "../config/api";
-import { getCsrfToken } from "./csrf";
+import { getJsonCsrfHeaders } from "./csrf";
 
 export type StartOnboardingPayload = {
   email: string;
@@ -33,20 +33,6 @@ export type OnboardingMeResponse = {
   postal_code?: string;
   country?: string;
 };
-
-async function getJsonCsrfHeaders(): Promise<Record<string, string>> {
-  const csrfToken = await getCsrfToken();
-
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
-
-  if (csrfToken) {
-    headers["X-CSRFToken"] = csrfToken;
-  }
-
-  return headers;
-}
 
 function getFirstApiError(data: unknown, fallbackMessage: string) {
   if (!data || typeof data !== "object") {
