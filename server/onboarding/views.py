@@ -1,6 +1,5 @@
 import secrets
 from django.conf import settings
-from django.core.mail import send_mail
 from django.contrib.auth import get_user_model, login
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404

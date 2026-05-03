@@ -184,16 +184,31 @@ SESSION_COOKIE_SECURE = IS_PRODUCTION
 CSRF_COOKIE_SAMESITE = "None" if IS_PRODUCTION else "Lax"
 CSRF_COOKIE_SECURE = IS_PRODUCTION
 
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
+RESEND_FROM_EMAIL = os.environ.get(
+    "RESEND_FROM_EMAIL",
+    "RegForm <onboarding@mail.regform.org.pl>",
+)
 
-EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
-EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
-EMAIL_USE_TLS = get_bool_env("EMAIL_USE_TLS", True)
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
-DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
-
-if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
+if not RESEND_API_KEY:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+FRONTEND_BASE_URL = os.environ.get(
+    "FRONTEND_BASE_URL",
+    "http://localhost:5173",
+)
+
+CORS_ALLOWED_ORIGINS = [
+    FRONTEND_BASE_URL,
+    "http://localhost:5173",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    FRONTEND_BASE_URL,
+    "http://localhost:5173",
+]
