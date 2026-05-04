@@ -76,3 +76,13 @@ cd client
 npm install
 npm run dev
 ```
+
+## Future improvements
+
+- Add backend tests for authentication, onboarding progress and email verification.
+- Add frontend tests for form validation and user flow.
+- Improve frontend UI and loading states.
+- Add better error messages for failed API requests.
+- Add password reset flow.
+- Add user profile page after completed onboarding.
+- Improve accessibility and mobile responsiveness.
