@@ -19,12 +19,6 @@ def send_verification_email(to_email: str, verification_url: str) -> bool:
             "from": settings.RESEND_FROM_EMAIL,
             "to": [to_email],
             "subject": "Verify your account",
-            "html": f"""
-                <p>Hello,</p>
-                <p>Click the link below to verify your account:</p>
-                <p><a href="{verification_url}">Verify your account</a></p>
-                <p>If you did not create this account, you can ignore this email.</p>
-            """,
             "text": (
                 "Hello,\n\n"
                 "Click the link below to verify your account:\n"
