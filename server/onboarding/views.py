@@ -14,6 +14,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
+from server.onboarding.emails import send_verification_email
+
 from .models import OnboardingSession
 from .serializers import (
     EmailAvailabilitySerializer,
@@ -55,15 +57,9 @@ class OnboardingStartView(APIView):
             f"{settings.FRONTEND_BASE_URL}/onboarding/complete?token={verification_token}"
         )
 
-        send_mail(
-            subject="Verify your account",
-            message=(
-                "Thank you for registering.\n\n"
-                f"Verify your email by opening this link:\n{verification_url}"
-            ),
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[onboarding.user.email],
-            fail_silently=False,
+        send_verification_email(
+            to_email=onboarding.user.email,
+            verification_url=verification_url,
         )
 
         return Response(
@@ -184,15 +180,9 @@ class ResendVerificationEmailView(APIView):
             f"{settings.FRONTEND_BASE_URL}/onboarding/complete?token={verification_token}"
         )
 
-        send_mail(
-            subject="Verify your account",
-            message=(
-                "Thank you for registering.\n\n"
-                f"Verify your email by opening this link:\n{verification_url}"
-            ),
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[request.user.email],
-            fail_silently=False,
+        send_verification_email(
+            to_email=onboarding.user.email,
+            verification_url=verification_url,
         )
 
         return Response(
