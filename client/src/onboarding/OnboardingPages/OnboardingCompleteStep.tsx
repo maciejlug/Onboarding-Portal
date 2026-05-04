@@ -41,6 +41,8 @@ export default function OnboardingCompleteStep() {
               verifyResponse.detail ??
               "Email verified successfully.",
           );
+
+          navigate("/onboarding/complete", { replace: true });
         }
 
         const response = await getOnboardingMe();
@@ -50,18 +52,28 @@ export default function OnboardingCompleteStep() {
           email: response.email ?? "",
         });
       } catch (err) {
-        setError(
+        const errorMessage =
           err instanceof Error
             ? err.message
-            : "Could not load onboarding status.",
-        );
+            : "Could not load onboarding status.";
+
+        if (
+          errorMessage.includes("No OnboardingSession") ||
+          errorMessage.includes("matches the given query")
+        ) {
+          setError(
+            "This verification link is invalid or has already been used.",
+          );
+        } else {
+          setError(errorMessage);
+        }
       } finally {
         setIsLoading(false);
       }
     }
 
     load();
-  }, [searchParams]);
+  }, [searchParams, navigate]);
 
   async function handleResendVerificationEmail() {
     try {

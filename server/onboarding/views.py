@@ -142,23 +142,51 @@ class VerifyEmailView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        token = request.query_params.get("token", "").strip()
+        token = request.query_params.get("token")
 
-        onboarding = get_object_or_404(
-            OnboardingSession,
-            email_verification_token=token,
-        )
+        if not token:
+            return Response(
+                {"detail": "Verification token is missing."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        onboarding = OnboardingSession.objects.filter(
+            email_verification_token=token
+        ).first()
+
+        if not onboarding:
+            if request.user.is_authenticated:
+                current_onboarding = OnboardingSession.objects.filter(
+                    user=request.user
+                ).first()
+
+                if current_onboarding and current_onboarding.is_email_verified:
+                    return Response({
+                        "message": "Email is already verified.",
+                        "is_email_verified": True,
+                    })
+
+            return Response(
+                {
+                    "detail": "This verification link is invalid or has already been used."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         onboarding.is_email_verified = True
         onboarding.email_verification_token = ""
-        onboarding.save(update_fields=["is_email_verified", "email_verification_token", "updated_at"])
-
-        return Response(
-            {
-                "message": "Email verified successfully.",
-                "is_email_verified": True,
-            }
+        onboarding.save(
+            update_fields=[
+                "is_email_verified",
+                "email_verification_token",
+                "updated_at",
+            ]
         )
+
+        return Response({
+            "message": "Email verified successfully.",
+            "is_email_verified": True,
+        })
     
 class ResendVerificationEmailView(APIView):
     permission_classes = [IsAuthenticated]
