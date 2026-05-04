@@ -6,7 +6,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   getOnboardingMe,
   resendVerificationEmail,
@@ -21,12 +21,12 @@ type OnboardingMe = {
 
 export default function OnboardingCompleteStep() {
   const [searchParams] = useSearchParams();
-
   const [data, setData] = useState<OnboardingMe | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isResending, setIsResending] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function load() {
@@ -140,11 +140,17 @@ export default function OnboardingCompleteStep() {
 
         {error && data && <Typography color="error">{error}</Typography>}
 
-        <Box>
-          <Button component={Link} to="/" variant="contained">
+        <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
+          <Button variant="outlined" onClick={() => navigate("/")}>
             Go to home
           </Button>
-        </Box>
+
+          {data && data.status !== "completed" && (
+            <Button variant="contained" onClick={() => navigate("/onboarding")}>
+              Continue onboarding
+            </Button>
+          )}
+        </Stack>
       </Stack>
     </Box>
   );
