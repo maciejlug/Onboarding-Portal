@@ -79,7 +79,7 @@ npm run dev
 
 ## Future improvements
 
-- Add backend tests for authentication, onboarding progress and email verification.
+- ~~Add backend tests for authentication, onboarding progress and email verification.~~
 - Add frontend tests for form validation and user flow.
 - Improve frontend UI and loading states.
 - Add better error messages for failed API requests.
